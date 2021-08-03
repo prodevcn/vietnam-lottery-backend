@@ -1,0 +1,41 @@
+Arguments: 
+  /usr/bin/node /usr/share/yarn/bin/yarn.js add bcryptjs concurrently cors ejs jsonwebtoken lodash mailgun moment mongoose morgan multer ndoemailer passport passport-jwt passport-local sendgrid socket.io
+
+PATH: 
+  /home/cyberman/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/usr/local/go/bin:/home/cyberman/Android/Sdk/tools:/home/cyberman/Android/Sdk/platform-tools:/home/cyberman/Android/Sdk/emulator:/home/cyberman/Android/Sdk/tools/bin:/user/lib/dart/bin:/home/cyberman/bin:/usr/lib/jvm/java-8-openjdk-amd64/bin
+
+Yarn version: 
+  1.22.5
+
+Node version: 
+  14.17.2
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/ndoemailer: Not found
+      at Request.params.callback [as _callback] (/usr/share/yarn/lib/cli.js:66988:18)
+      at Request.self.callback (/usr/share/yarn/lib/cli.js:140749:22)
+      at Request.emit (events.js:375:28)
+      at Request.<anonymous> (/usr/share/yarn/lib/cli.js:141721:10)
+      at Request.emit (events.js:375:28)
+      at IncomingMessage.<anonymous> (/usr/share/yarn/lib/cli.js:141643:12)
+      at Object.onceWrapper (events.js:481:28)
+      at IncomingMessage.emit (events.js:387:35)
+      at endReadableNT (internal/streams/readable.js:1317:12)
+      at processTicksAndRejections (internal/process/task_queues.js:82:21)
+
+npm manifest: 
+  {
+    "name": "lottery-server",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT"
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
