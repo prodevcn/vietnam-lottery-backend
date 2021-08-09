@@ -31,7 +31,7 @@ const OrderSchema = new Schema({
         type: Boolean,
         default: false
     },
-    bettingAmount: {
+    betAmount: {
         type: Number,
         required: true,
     },

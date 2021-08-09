@@ -4,8 +4,8 @@ const { Schema } = mongoose;
 
 const StagingSchema = new Schema({
     numbers: {
-        type: Array,
-        default: []
+        type: Object,
+        default: {}
     },
     gameType: {
         type: String,

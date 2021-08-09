@@ -13,37 +13,32 @@ const requireLogin = passport.authenticate('local', { session: false });
 module.exports = app => {
 
     /* define routes */
-    
     const apiRoutes = express.Router();
     const authRoutes = express.Router();
     const gameRoutes = express.Router();
     const betRoutes = express.Router();
 
     /* sort routes according url */
-
     apiRoutes.use('/auth', authRoutes);
     apiRoutes.use('/game', gameRoutes);
   
-
-    /** auth routing */
-    
+    /** auth routing */  
     authRoutes.post('/register', AuthController.register);
     authRoutes.post('/login', requireLogin, AuthController.login);
     
     /** game routing */
-    gameRoutes.get('/get-history/:gameType', requireAuth, GameController.getResultHistory);
-    gameRoutes.get('/get-new-game/:gameType', requireAuth, GameController.getNewGame);
-    gameRoutes.post('/save-result', requireAuth, GameController.saveGameResult);
-    gameRoutes.get('/get-results', GameController.getResults);
+    gameRoutes.get('/get-new-game-info/:gameType', requireAuth, GameController.getNewGameInfo);
+    gameRoutes.get('/get-latest-results', GameController.getLatestResults);
+    gameRoutes.get('/get-all-results/:gameType', requireAuth, GameController.getAllResultForGameType);
     gameRoutes.use('/bet', betRoutes);
+
+    gameRoutes.post('/save-result', requireAuth, GameController.saveGameResult); // for postman test
     
     /** bet routing */
     betRoutes.post('/save', requireAuth, BetController.saveBet);
-    betRoutes.post('/remove', requireAuth, BetController.removeBet);
-    betRoutes.get('/fetch/:userId', requireAuth, BetController.fetchBets);
+    betRoutes.get('/get-bet-history/:userId', requireAuth, BetController.fetchBets);
     
     /** api route */
-    
     apiRoutes.get('/test', (req, res) => {
         return res.send("Server is running");
     });

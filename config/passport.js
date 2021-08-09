@@ -31,11 +31,18 @@ module.exports = (passport) => {
             User.findOne({ email })
                 .then(user => {
                     if (!user) {
+                        console.log('[ERROR]:[USER_EMAIL_NOT_FOUND]');
                         return done(null, false, { error: 'Your login details could not be verified. Please try again.' });
                     }
                     user.comparePassword(password, (err1, isMatch) => {
-                        if (err1) { return done(err1)}
-                        if (!isMatch) { return done(null, false, { error: 'Your login details could not be verified. Please try again.' }); }
+                        if (err1) { 
+                            console.log('[ERROR]:[PASSWORD_MATCHING_FAILURE]', err1);
+                            return done(err1)
+                        }
+                        if (!isMatch) {
+                            console.log('[ERROR]:[WRONG_PASSWORD]');
+                            return done(null, false, { error: 'Your login details could not be verified. Please try again.' }); 
+                        }
                         return done(null, user);
                     });
                 })
