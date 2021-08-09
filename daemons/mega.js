@@ -1,13 +1,14 @@
-/** import models */
 const Staging = require('../models/staging');
 const Order = require('../models/order');
 const User = require('../models/user');
 const Result = require('../models/result');
-/** import outers */
-const conf = require('../config/main');
-const {duration} = require('../config/game');
+const History = require('../models/history');
 
-const createLotNumbers
+const {durations, winRates} = require('../config/game');
+
+const createMegaNumbers = () => {
+
+}
 
 const processOrders = async (io, prevEndTime) => {
     

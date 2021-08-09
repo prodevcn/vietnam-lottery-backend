@@ -1,5 +1,5 @@
 /** create random lotto number */
-const createLottoNumbers = () => {
+exports.createLottoNumbers = () => {
     const redAward = (""+Math.random()).substring(2,7);
     const first = (""+Math.random()).substring(2,7);
     const second = (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7);

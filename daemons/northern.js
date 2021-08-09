@@ -21,9 +21,9 @@ const {
 } = require('./lib');
 const {durations, winRates} = require('../config/game');
 
-const saveHistory = async (order, totalPoints, matched_count) => {
-    const ordered_userInfo = await User.findOne({_id: order.userId});
-    const newHistory = new History({
+const saveHistory = async (order, totalPoints, matched_count, lottoNumbers) => {
+    let ordered_userInfo = await User.findOne({_id: order.userId});
+    let newHistory = new History({
         userId: order.userId,
         gameType: order.userId,
         betType: order.betType,
@@ -31,7 +31,7 @@ const saveHistory = async (order, totalPoints, matched_count) => {
         resultNumbers: lottoNumbers,
         numbers: order.numbers,
         multiple: order.multiple,
-        bettingAmount: order.bettingAmount,
+        betAmount: order.betAmount,
         winningAmount: totalPoints,
         processed: true,
         status: matched_count > 0 ? 'win' : 'lose'
@@ -43,54 +43,49 @@ const saveHistory = async (order, totalPoints, matched_count) => {
 
 const processBackpack = async (order, lottoNumbers) => {
     let totalPoints = 0;
+    let matched_count = 0;
+    let order_numbers = order.numbers.split(';');
+    order_numbers.pop();
     switch(order.digitType) {
         case 'lot2':
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const last2digits = getLast2digits(lottoNumbers);
-            const matched_count = order_numbers.filter(e => last2digits.includes(e)).length;
+            let last2digits = getLast2digits(lottoNumbers);
+            matched_count = order_numbers.filter(e => last2digits.includes(e)).length;
             if (matched_count == 0) {
                 totalPoints = 0;
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.backpack.lot2 * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         case 'lot2_1K':
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const first2digits = getFirst2digits(lottoNumbers);
-            const matched_count = order_numbers.filter(e => first2digits.includes(e)).length;
+            let first2digits = getFirst2digits(lottoNumbers);
+            matched_count = order_numbers.filter(e => first2digits.includes(e)).length;
             if (matched_count == 0) {
                 totalPoints = 0;
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.backpack.lot2_1K * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         case 'lot3':
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const last3digits = getLast3digits(lottoNumbers);
-            const matched_count = order_numbers.filter(e => last3digits.includes(e)).length;
+            let last3digits = getLast3digits(lottoNumbers);
+            matched_count = order_numbers.filter(e => last3digits.includes(e)).length;
             if (matched_count == 0) {
                 totalPoints = 0;
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.backpack.lot3 * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
-        case 'lot4': 
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const last4digits = getLast4digits(lottoNumbers);
-            const matched_count = order_numbers.filter(e => last4digits.includes(e)).length;
+        case 'lot4':
+            let last4digits = getLast4digits(lottoNumbers);
+            matched_count = order_numbers.filter(e => last4digits.includes(e)).length;
             if (matched_count == 0) {
                 totalPoints = 0;
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.backpack.lot4 * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         default:
             return;
@@ -99,14 +94,14 @@ const processBackpack = async (order, lottoNumbers) => {
 
 const processLoxien = async (order, lottoNumbers) => {
     let totalPoints = 0;
+    let matched_count = 0;
+    let order_numbers = order.numbers.split(';');
+    order_numbers.pop();
+    let last2digits = getLast2digits(lottoNumbers);
     switch(order.digitType) {
         case 'xien2':
-            let matched_count = 0;
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const last2digits = getLast2digits(lottoNumbers);
             for(let pair of order_numbers) {
-                const elements = pair.split('&');
+                let elements = pair.split('&');
                 if (elements.every(e => last2digits.includes(e))) {
                     matched_count ++;
                 }
@@ -116,15 +111,11 @@ const processLoxien = async (order, lottoNumbers) => {
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.loxien.loxien2 * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         case 'xien3':
-            let matched_count = 0;
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const last2digits = getLast2digits(lottoNumbers);
             for(let pair of order_numbers) {
-                const elements = pair.split('&');
+                let elements = pair.split('&');
                 if (elements.every(e => last2digits.includes(e))) {
                     matched_count ++;
                 }
@@ -134,15 +125,11 @@ const processLoxien = async (order, lottoNumbers) => {
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.loxien.loxien3 * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         case 'xien4':
-            let matched_count = 0;
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const last2digits = getLast2digits(lottoNumbers);
             for(let pair of order_numbers) {
-                const elements = pair.split('&');
+                let elements = pair.split('&');
                 if (elements.every(e => last2digits.includes(e))) {
                     matched_count ++;
                 }
@@ -152,7 +139,7 @@ const processLoxien = async (order, lottoNumbers) => {
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.loxien.loxien3 * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         default:
             return;
@@ -161,66 +148,59 @@ const processLoxien = async (order, lottoNumbers) => {
 
 const processScore = async (order, lottoNumbers) => {
     let totalPoints = 0;
+    let matched_count = 0;
+    let order_numbers = order.numbers.split(';');
+    order_numbers.pop();
     switch(order.digitType) {
         case 'first':
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const firstPrizeLast2digit = getFirstPrizeLast2digits(lottoNumbers);
-            const matched_count = order_numbers.filter(e => e == firstPrizeLast2digit).length;
+            let firstPrizeLast2digit = getFirstPrizeLast2digits(lottoNumbers);
+            matched_count = order_numbers.filter(e => e == firstPrizeLast2digit).length;
             if (matched_count == 0) {
                 totalPoints = 0;
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.score.first * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         case 'special_topics':
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const redAwardLast2digit = getRedAwardLast2digits(lottoNumbers);
-            const matched_count = order_numbers.filter(e => e == redAwardLast2digit).length;
+            let redAwardLast2digit = getRedAwardLast2digits(lottoNumbers);
+            matched_count = order_numbers.filter(e => e == redAwardLast2digit).length;
             if (matched_count == 0) {
                 totalPoints = 0;
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.score.special_topics * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         case 'special_headline':
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const redAwardLast2digit = getRedAwardFirst2digits(lottoNumbers);
-            const matched_count = order_numbers.filter(e => e == redAwardLast2digit).length;
+            let redAwardFirst2digit = getRedAwardFirst2digits(lottoNumbers);
+            matched_count = order_numbers.filter(e => e == redAwardFirst2digit).length;
             if (matched_count == 0) {
                 totalPoints = 0;
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.score.special_headline * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         case 'problem':
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const seventhNumbers = get7thNumbers(lottoNumbers);
-            const matched_count = order_numbers.filter(e => seventhNumbers.includes(e)).length;
+            let seventhNumbers = get7thNumbers(lottoNumbers);
+            matched_count = order_numbers.filter(e => seventhNumbers.includes(e)).length;
             if (matched_count == 0) {
                 totalPoints = 0;
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.score.problem * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         case 'first_de':
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const firstPrizeFirst2digit = getFirstPrizeFirst2digits(lottoNumbers);
-            const matched_count = order_numbers.filter(e => e == firstPrizeFirst2digit).length;
+            let firstPrizeFirst2digit = getFirstPrizeFirst2digits(lottoNumbers);
+            matched_count = order_numbers.filter(e => e == firstPrizeFirst2digit).length;
             if (matched_count == 0) {
                 totalPoints = 0;
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.score.first_de * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         default:
             return;
@@ -229,30 +209,29 @@ const processScore = async (order, lottoNumbers) => {
 
 const processHeadAndTail = async (order, lottoNumbers) => {
     let totalPoints = 0;
+    let matched_count = 0;
+    let order_numbers = order.numbers.split(';');
+    order_numbers.pop();
     switch(order.digitType) {
         case 'head':
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const tenthDigit = lottoNumbers.redAward.substr(3, 4);
-            const matched_count = order_numbers.filter(e => e == tenthDigit).length;
+            let tenthDigit = lottoNumbers.redAward.substr(3, 4);
+            matched_count = order_numbers.filter(e => e == tenthDigit).length;
             if (matched_count == 0) {
                 totalPoints = 0;
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.headandtail.head * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         case 'tail':
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const unitDigit = lottoNumbers.redAward.substr(4, 5);
-            const matched_count = order_numbers.filter(e => e == unitDigit).length;
+            let unitDigit = lottoNumbers.redAward.substr(4, 5);
+            matched_count = order_numbers.filter(e => e == unitDigit).length;
             if (matched_count == 0) {
                 totalPoints = 0;
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.headandtail.tail * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         default:
             return;
@@ -261,42 +240,39 @@ const processHeadAndTail = async (order, lottoNumbers) => {
 
 const process3more = async (order, lottoNumbers) => {
     let totalPoints = 0;
+    let matched_count = 0;
+    let order_numbers = order.numbers.split(';');
+    order_numbers.pop();
     switch(order.digitType) {
         case 'pin3':
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const pin3Numbers = get3PinNumbers(lottoNumbers);
-            const matched_count = order_numbers.filter(e => pin3Numbers.includes(e)).length;
+            let pin3Numbers = get3PinNumbers(lottoNumbers);
+            matched_count = order_numbers.filter(e => pin3Numbers.includes(e)).length;
             if (matched_count == 0) {
                 totalPoints = 0;
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.threeMore.pin3 * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         case 'pin3_headandtail':
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const pin3HeadAndTail = get3PinHeadAndTail(lottoNumbers);
-            const matched_count = order_numbers.filter(e => pin3HeadAndTail.includes(e)).length;
+            let pin3HeadAndTail = get3PinHeadAndTail(lottoNumbers);
+            matched_count = order_numbers.filter(e => pin3HeadAndTail.includes(e)).length;
             if (matched_count == 0) {
                 totalPoints = 0;
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.threeMore.pin3_headandtail * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         case 'special_pin3':
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const pin3Special = get3PinRedAward(lottoNumbers);
-            const matched_count = order_numbers.filter(e => e == pin3Special).length;
+            let pin3Special = get3PinRedAward(lottoNumbers);
+            matched_count = order_numbers.filter(e => e == pin3Special).length;
             if (matched_count == 0) {
                 totalPoints = 0;
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.threeMore.special_pin3 * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         default:
             return;
@@ -305,29 +281,29 @@ const process3more = async (order, lottoNumbers) => {
 
 const process4more = async (order, lottoNumbers) => {
     let totalPoints = 0;
-    const order_numbers = order.numbers.split(';');
+    let order_numbers = order.numbers.split(';');
     order_numbers.pop();
-    const pin4Special = get4PinRedAward(lottoNumbers);
-    const matched_count = order_numbers.filter(e => e == pin4Special).length;
+    let pin4Special = get4PinRedAward(lottoNumbers);
+    let matched_count = order_numbers.filter(e => e == pin4Special).length;
     if (matched_count == 0) {
         totalPoints = 0;
     } else {
         totalPoints = (2 * matched_count - 1) * winRates.northern.fourMore * order.multiple;
     }
-    await saveHistory(order, totalPoints, matched_count);
+    await saveHistory(order, totalPoints, matched_count, lottoNumbers);
     return;
 };
 
 const processSlide = async (order, lottoNumbers) => {
     let totalPoints = 0;
+    let matched_count = 0;
+    let order_numbers = order.numbers.split(';');
+    order_numbers.pop();
+    let last2digits = getLast2digits(lottoNumbers);
     switch(order.digitType) {
         case 'slide4':
-            let matched_count = 0;
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const last2digits = getLast2digits(lottoNumbers);
             for(let pair of order_numbers) {
-                const elements = pair.split('&');
+                let elements = pair.split('&');
                 if (elements.every(e => !last2digits.includes(e))) {
                     matched_count ++;
                 }
@@ -337,15 +313,11 @@ const processSlide = async (order, lottoNumbers) => {
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.slide.slide4 * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         case 'slide8':
-            let matched_count = 0;
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const last2digits = getLast2digits(lottoNumbers);
             for(let pair of order_numbers) {
-                const elements = pair.split('&');
+                let elements = pair.split('&');
                 if (elements.every(e => !last2digits.includes(e))) {
                     matched_count ++;
                 }
@@ -355,15 +327,11 @@ const processSlide = async (order, lottoNumbers) => {
             } else {
                 totalPoints = (2 * matched_count - 1) * winRates.northern.slide.slide8 * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         case 'slide12':
-            let matched_count = 0;
-            const order_numbers = order.numbers.split(';');
-            order_numbers.pop();
-            const last2digits = getLast2digits(lottoNumbers);
             for(let pair of order_numbers) {
-                const elements = pair.split('&');
+                let elements = pair.split('&');
                 if (elements.every(e => !last2digits.includes(e))) {
                     matched_count ++;
                 }
@@ -371,9 +339,9 @@ const processSlide = async (order, lottoNumbers) => {
             if (matched_count == 0) {
                 totalPoints = 0;
             } else {
-                totalPoints = (2 * matched_count - 1) * winRates.northern.slide.loxien2 * order.multiple;
+                totalPoints = (2 * matched_count - 1) * winRates.northern.slide.slide12 * order.multiple;
             }
-            await saveHistory(order, totalPoints, matched_count);
+            await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
         default:
             return;
@@ -382,8 +350,8 @@ const processSlide = async (order, lottoNumbers) => {
 
 
 const processOrders = async (io, prevEndTime) => {
-    const lottoNumbers = createLottoNumbers();
-    const newResult = new Result({
+    let lottoNumbers = createLottoNumbers();
+    let newResult = new Result({
         endTime: prevEndTime,
         gameType: 'northern',
         numbers: lottoNumbers
@@ -391,9 +359,9 @@ const processOrders = async (io, prevEndTime) => {
 
     await newResult.save();
     await Staging.updateOne({gameType: 'northern'}, {numbers: lottoNumbers});
-    const orders = await Order.find({gameType: 'northern', processed: false});
+    let orders = await Order.find({gameType: 'northern', processed: false});
     if (orders.length === 0) {
-        const endTime = Date.now() + durations.normal;
+        let endTime = Date.now() + durations.normal;
         await Staging.updateOne({gameType: "northern"}, {endTime: endTime });
         io.in('northern').emit('new game start');
         startLoopProcessor(io, endTime);
@@ -433,6 +401,11 @@ const processOrders = async (io, prevEndTime) => {
                     break;
             }
         }
+        await Order.deleteMany({});
+        let endTime = Date.now() + durations.normal;
+        await Staging.updateOne({gameType: "northern"}, {endTime: endTime });
+        io.in('northern').emit('new game start');
+        startLoopProcessor(io, endTime);
     }
 }
 
@@ -450,18 +423,18 @@ const startLoopProcessor = async (io, endTime) => {
 };
 
 exports.startNorthernDaemon = async io => {
-    const gameInfo = await Staging.findOne({gameType: 'northern'});
+    let gameInfo = await Staging.findOne({gameType: 'northern'});
     if (gameInfo) {
         if (gameInfo.endTime > Date.now()) {
             startLoopProcessor(io, gameInfo.endTime);
         } else {
-            const newEndTime = Date.now() + durations.normal;
+            let newEndTime = Date.now() + durations.normal;
             await Staging.updateOne({gameType: 'northern'}, {endTime: newEndTime});
             startLoopProcessor(io, newEndTime);
         }
     } else {
-        const endTime = Date.now() + durations.normal;
-        const newStaging = new Staging({
+        let endTime = Date.now() + durations.normal;
+        let newStaging = new Staging({
             gameType: 'northern',
             endTime: endTime
         });

@@ -19,7 +19,7 @@ const HistorySchema = new Schema({
         required: true
     },
     resultNumbers: {
-        type: Object,
+        type: String,
         required: true
     },
     numbers: {
@@ -30,7 +30,7 @@ const HistorySchema = new Schema({
         type: Number,
         required: true
     },
-    bettingAmount: {
+    betAmount: {
         type: Number,
         required: true,
     },
