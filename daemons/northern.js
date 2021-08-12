@@ -23,9 +23,10 @@ const {durations, winRates} = require('../config/game');
 
 const saveHistory = async (order, totalPoints, matched_count, lottoNumbers) => {
     let ordered_userInfo = await User.findOne({_id: order.userId});
+    console.log(lottoNumbers);
     let newHistory = new History({
         userId: order.userId,
-        gameType: order.userId,
+        gameType: 'northern',
         betType: order.betType,
         digitType: order.digitType,
         resultNumbers: lottoNumbers,
@@ -38,7 +39,7 @@ const saveHistory = async (order, totalPoints, matched_count, lottoNumbers) => {
     });
     await newHistory.save();
     await User.updateOne({_id: order.userId},{balance: ordered_userInfo.balance + totalPoints});
-    await Order.updateOne({_id: order._id}, {processed: true});
+    await Order.updateOne({_id: order._id}, {processed: true, status: matched_count > 0 ? 'win' : 'lose'});
 }
 
 const processBackpack = async (order, lottoNumbers) => {
@@ -46,6 +47,7 @@ const processBackpack = async (order, lottoNumbers) => {
     let matched_count = 0;
     let order_numbers = order.numbers.split(';');
     order_numbers.pop();
+    console.log('[PROCESS:BACKPACK]')
     switch(order.digitType) {
         case 'lot2':
             let last2digits = getLast2digits(lottoNumbers);
@@ -98,6 +100,7 @@ const processLoxien = async (order, lottoNumbers) => {
     let order_numbers = order.numbers.split(';');
     order_numbers.pop();
     let last2digits = getLast2digits(lottoNumbers);
+    console.log('[PROCESS:LOXIEN]]')
     switch(order.digitType) {
         case 'xien2':
             for(let pair of order_numbers) {
@@ -238,7 +241,7 @@ const processHeadAndTail = async (order, lottoNumbers) => {
     }
 };
 
-const process3more = async (order, lottoNumbers) => {
+const processThreeMore = async (order, lottoNumbers) => {
     let totalPoints = 0;
     let matched_count = 0;
     let order_numbers = order.numbers.split(';');
@@ -279,7 +282,7 @@ const process3more = async (order, lottoNumbers) => {
     }
 };
 
-const process4more = async (order, lottoNumbers) => {
+const processFourMore = async (order, lottoNumbers) => {
     let totalPoints = 0;
     let order_numbers = order.numbers.split(';');
     order_numbers.pop();
@@ -350,6 +353,7 @@ const processSlide = async (order, lottoNumbers) => {
 
 
 const processOrders = async (io, prevEndTime) => {
+    console.log('[PROCESS_ORDER]');
     let lottoNumbers = createLottoNumbers();
     let newResult = new Result({
         endTime: prevEndTime,
@@ -360,6 +364,7 @@ const processOrders = async (io, prevEndTime) => {
     await newResult.save();
     await Staging.updateOne({gameType: 'northern'}, {numbers: lottoNumbers});
     let orders = await Order.find({gameType: 'northern', processed: false});
+    console.log(orders);
     if (orders.length === 0) {
         let endTime = Date.now() + durations.normal;
         await Staging.updateOne({gameType: "northern"}, {endTime: endTime });
@@ -367,9 +372,11 @@ const processOrders = async (io, prevEndTime) => {
         startLoopProcessor(io, endTime);
     }
     else {
+        console.log('=======================================');
         for(let order of orders) {
             switch(order.betType) {
                 case 'backpack': {
+                    console.log('[BACKPACK]');
                     await processBackpack(order, lottoNumbers);
                     break;
                 }
@@ -385,12 +392,12 @@ const processOrders = async (io, prevEndTime) => {
                     await processHeadAndTail(order, lottoNumbers);
                     break;
                 }
-                case '3more': {
-                    await process3more(order, lottoNumbers);
+                case 'threeMore': {
+                    await processThreeMore(order, lottoNumbers);
                     break;
                 }
-                case '4more': {
-                    await process4more(order, lottoNumbers);
+                case 'fourMore': {
+                    await processFourMore(order, lottoNumbers);
                     break;
                 }
                 case 'slide': {
@@ -401,7 +408,7 @@ const processOrders = async (io, prevEndTime) => {
                     break;
             }
         }
-        await Order.deleteMany({});
+        // await Order.deleteMany({});
         let endTime = Date.now() + durations.normal;
         await Staging.updateOne({gameType: "northern"}, {endTime: endTime });
         io.in('northern').emit('new game start');

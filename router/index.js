@@ -25,11 +25,13 @@ module.exports = app => {
     /** auth routing */  
     authRoutes.post('/register', AuthController.register);
     authRoutes.post('/login', requireLogin, AuthController.login);
-    
+    authRoutes.get('/get-user-info/:userId', requireAuth, AuthController.getUserInfo);
     /** game routing */
     gameRoutes.get('/get-new-game-info/:gameType', requireAuth, GameController.getNewGameInfo);
     gameRoutes.get('/get-latest-results', GameController.getLatestResults);
     gameRoutes.get('/get-all-results/:gameType', requireAuth, GameController.getAllResultForGameType);
+    gameRoutes.get('/get-all-history/:userId', requireAuth, GameController.getAllHistoryForUser);
+    gameRoutes.get('/get-all-order/:userId', requireAuth, GameController.getAllOrderForUser);
     gameRoutes.use('/bet', betRoutes);
 
     gameRoutes.post('/save-result', requireAuth, GameController.saveGameResult); // for postman test

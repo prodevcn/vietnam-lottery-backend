@@ -1,7 +1,7 @@
 module.exports = {
     durations: {
         // normal: 86400000, // 24 hours
-        normal: 6000,
+        normal: 60000,
         mega: 60000, // 1 mins
     },
     winRates: {

@@ -25,6 +25,17 @@ exports.login = (req, res) => {
     });
 };
 
+exports.getUserInfo = (req, res) => {
+    const {userId} = req.params;
+    User.findOne({_id: userId})
+        .then(user => {
+            return res.send(user);
+        })
+        .catch(err => {
+            console.log('[ERROR]:[GET_USER_INFO]');
+        });
+}
+
 exports.register = (req, res, next) => {
     const {email, firstName, lastName, password} = req.body;
 

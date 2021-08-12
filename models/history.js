@@ -19,8 +19,8 @@ const HistorySchema = new Schema({
         required: true
     },
     resultNumbers: {
-        type: String,
-        required: true
+        type: Object,
+        default: {},
     },
     numbers: {
         type: String,

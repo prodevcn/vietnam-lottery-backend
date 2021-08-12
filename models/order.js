@@ -31,6 +31,10 @@ const OrderSchema = new Schema({
         type: Boolean,
         default: false
     },
+    status: {
+        type: String,
+        default: 'pending',
+    },
     betAmount: {
         type: Number,
         required: true,
