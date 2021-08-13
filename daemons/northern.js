@@ -332,7 +332,7 @@ const processSlide = async (order, lottoNumbers) => {
             }
             await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;
-        case 'slide12':
+        case 'slide10':
             for(let pair of order_numbers) {
                 let elements = pair.split('&');
                 if (elements.every(e => !last2digits.includes(e))) {
@@ -342,7 +342,7 @@ const processSlide = async (order, lottoNumbers) => {
             if (matched_count == 0) {
                 totalPoints = 0;
             } else {
-                totalPoints = (2 * matched_count - 1) * winRates.northern.slide.slide12 * order.multiple;
+                totalPoints = (2 * matched_count - 1) * winRates.northern.slide.slide10 * order.multiple;
             }
             await saveHistory(order, totalPoints, matched_count, lottoNumbers);
             return;

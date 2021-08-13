@@ -2,8 +2,7 @@ const Result = require('../models/result');
 const Staging = require('../models/staging');
 
 
-
-exports.getLatestResults = (req, res, next) => {
+exports.getAllLatestResults = (req, res) => {
     const northern = new Promise((resolve, reject) => {
         Result.findOne({gameType: "northern"}).sort({ endTime: -1 })
             .then(response => {
@@ -23,9 +22,22 @@ exports.getLatestResults = (req, res, next) => {
             res.send("something went wrong");
         });
 };
+exports.getLatestResult = (req, res) => {
+    const {gameType} = req.params;
+    Result.findOne({gameType: gameType}).sort({endTime: -1})
+        .then(result => {
+            if (result) {
+                return res.send(result);
+            } 
+            return res.json({msg: 'no result', status: false});
+        })
+        .catch(err => {
+            console.error('[ERROR]:[GET_LATEST_RESULT]', err);
+        });
+};
 exports.getAllResultForGameType = (req, res, next) => {
     const { gameType } = req.params;
-    Result.find({gameType}).sort({endTime: -1})
+    Result.find({gameType}).sort({endTime: -1}).limit(100)
         .then(data => {
             console.log('[SUCCESS]:[FETCHING_GAME_HISTORY]');
             return res.json(data);

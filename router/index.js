@@ -28,7 +28,8 @@ module.exports = app => {
     authRoutes.get('/get-user-info/:userId', requireAuth, AuthController.getUserInfo);
     /** game routing */
     gameRoutes.get('/get-new-game-info/:gameType', requireAuth, GameController.getNewGameInfo);
-    gameRoutes.get('/get-latest-results', GameController.getLatestResults);
+    gameRoutes.get('/get-latest-result/:gameType', requireAuth, GameController.getLatestResult);
+    gameRoutes.get('/get-all-latest-results', GameController.getAllLatestResults);
     gameRoutes.get('/get-all-results/:gameType', requireAuth, GameController.getAllResultForGameType);
     gameRoutes.get('/get-all-history/:userId', requireAuth, GameController.getAllHistoryForUser);
     gameRoutes.get('/get-all-order/:userId', requireAuth, GameController.getAllOrderForUser);
@@ -42,7 +43,7 @@ module.exports = app => {
     
     /** api route */
     apiRoutes.get('/test', (req, res) => {
-        return res.send("Server is running");
+        return res.send({status: true, msg: "Server is running"});
     });
     
     app.use('/', apiRoutes);
