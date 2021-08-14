@@ -33,6 +33,7 @@ module.exports = app => {
     gameRoutes.get('/get-all-results/:gameType', requireAuth, GameController.getAllResultForGameType);
     gameRoutes.get('/get-all-history/:userId', requireAuth, GameController.getAllHistoryForUser);
     gameRoutes.get('/get-all-order/:userId', requireAuth, GameController.getAllOrderForUser);
+    gameRoutes.get('/get-all-orders', requireAuth, GameController.getAllOrders);
     gameRoutes.use('/bet', betRoutes);
 
     gameRoutes.post('/save-result', requireAuth, GameController.saveGameResult); // for postman test

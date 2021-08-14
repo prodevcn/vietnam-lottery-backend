@@ -32,7 +32,7 @@ module.exports = (passport) => {
                 .then(user => {
                     if (!user) {
                         console.log('[ERROR]:[USER_EMAIL_NOT_FOUND]');
-                        return done(null, false, { error: 'Your login details could not be verified. Please try again.' });
+                        return done(null, false, { message: 'Incorrect email address.' });
                     }
                     user.comparePassword(password, (err1, isMatch) => {
                         if (err1) { 
@@ -41,7 +41,7 @@ module.exports = (passport) => {
                         }
                         if (!isMatch) {
                             console.log('[ERROR]:[WRONG_PASSWORD]');
-                            return done(null, false, { error: 'Your login details could not be verified. Please try again.' }); 
+                            return done(null, false, { message: 'Incorrect password' }); 
                         }
                         return done(null, user);
                     });

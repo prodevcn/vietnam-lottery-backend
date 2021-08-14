@@ -2,7 +2,7 @@ module.exports = {
     durations: {
       // normal: 86400000, // 24 hours
       normal: 60000,
-      mega: 60000, // 1 mins
+      mega: 6000, // 1 mins
     },
     winRates: {
       northern: {
@@ -39,7 +39,28 @@ module.exports = {
           slide8: 8000,
           slide10: 12000,
         },
+        jackpot: {
+          jackpot: 85000,
+        }
       },
+      // mega: {
+      //   normal: 7120,
+      //   multiple: {
+      //     hit4:
+      //     hit3:
+      //     hit3_2:
+      //     hit2:
+      //   },
+      //   slide: {
+      //     slide5: 2070,
+      //     slide6: 2430,
+      //     slide7: 2880,
+      //     slide8: 3420,
+      //     slide9: 4080,
+      //     slide10: 4900,
+      //   }
+      //   select:
+      // }
     },
     betRates: {
       backpack: {
@@ -75,6 +96,13 @@ module.exports = {
         slide8: 1000,
         slide10: 1000,
       },
+      jackpot: 1000,
+      // mega: {
+      //   normal: 1000,
+      //   multiple:
+      //   slide:
+      //   select:
+      // }
     },
   };
   

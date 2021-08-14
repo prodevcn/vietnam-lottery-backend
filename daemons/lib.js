@@ -1,3 +1,4 @@
+const _ = require("lodash");
 /** create random lotto number */
 exports.createLottoNumbers = () => {
     const redAward = (""+Math.random()).substring(2,7);
@@ -131,3 +132,15 @@ exports.get4PinRedAward = value => {
 };
 
 
+/** create random numbers for mega lottery */
+exports.createMegaLottoNumbers = () => {
+    const labels = ["first", "second", "third", "fourth", "fifth", "sixth"];
+    const _target = {};
+    for (let label of labels) {
+        let num = _.random(0, 45);
+        if (num < 10) num = '0' + num;
+        else num = num.toString();
+        _target[label] = num;
+    }
+    return _target;
+};

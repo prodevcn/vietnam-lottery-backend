@@ -6,6 +6,7 @@ const { Server } = require('socket.io');
 
 const router = require('./router');
 const { startNorthernDaemon } = require('./daemons/northern');
+const { startMegaDaemon } = require('./daemons/mega');
 const socketEvents = require('./helpers/socketEvents');
 const conf = require('./config/main');
 
@@ -61,5 +62,6 @@ require('./config/passport')(passport);
 router(app);
 
 startNorthernDaemon(io);
+startMegaDaemon(io);
 
 module.exports = server;

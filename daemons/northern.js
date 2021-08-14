@@ -351,6 +351,23 @@ const processSlide = async (order, lottoNumbers) => {
     }
 };
 
+const processJackpot = async (order, lottoNumbers) => {
+    let totalPoints = 0;
+    let matched_count = 0;
+    let order_numbers = order.numbers.split(';');
+    order_numbers.pop();
+    console.log('[PROCESS:JACK]');
+    let redAwardLast2digit = getRedAwardLast2digits(lottoNumbers);
+    matched_count = order_numbers.filter(e => e == redAwardLast2digit).length;
+    if (matched_count == 0) {
+        totalPoints = 0;
+    } else {
+        totalPoints = (2 * matched_count - 1) * winRates.northern.score.special_topics * order.multiple;
+    }
+    await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+    return;
+};
+
 
 const processOrders = async (io, prevEndTime) => {
     console.log('[PROCESS_ORDER]');
@@ -369,7 +386,7 @@ const processOrders = async (io, prevEndTime) => {
         let endTime = Date.now() + durations.normal;
         await Staging.updateOne({gameType: "northern"}, {endTime: endTime });
         io.in('northern').emit('new game start');
-        startLoopProcessor(io, endTime);
+        startLoopProcess(io, endTime);
     }
     else {
         console.log('=======================================');
@@ -404,6 +421,10 @@ const processOrders = async (io, prevEndTime) => {
                     await processSlide(order, lottoNumbers);
                     break;
                 }
+                case 'jackpot': {
+                    await processJackpot(order, lottoNumbers);
+                    break;
+                }
                 default:
                     break;
             }
@@ -412,11 +433,11 @@ const processOrders = async (io, prevEndTime) => {
         let endTime = Date.now() + durations.normal;
         await Staging.updateOne({gameType: "northern"}, {endTime: endTime });
         io.in('northern').emit('new game start');
-        startLoopProcessor(io, endTime);
+        startLoopProcess(io, endTime);
     }
 }
 
-const startLoopProcessor = async (io, endTime) => {
+const startLoopProcess = async (io, endTime) => {
     let duration = endTime - Date.now();
     let interval = setInterval(() => {
         duration -= 1000;
@@ -430,14 +451,15 @@ const startLoopProcessor = async (io, endTime) => {
 };
 
 exports.startNorthernDaemon = async io => {
+    console.log('[START]:[NORTHERN_DAEMON]');
     let gameInfo = await Staging.findOne({gameType: 'northern'});
     if (gameInfo) {
         if (gameInfo.endTime > Date.now()) {
-            startLoopProcessor(io, gameInfo.endTime);
+            startLoopProcess(io, gameInfo.endTime);
         } else {
             let newEndTime = Date.now() + durations.normal;
             await Staging.updateOne({gameType: 'northern'}, {endTime: newEndTime});
-            startLoopProcessor(io, newEndTime);
+            startLoopProcess(io, newEndTime);
         }
     } else {
         let endTime = Date.now() + durations.normal;
@@ -446,7 +468,7 @@ exports.startNorthernDaemon = async io => {
             endTime: endTime
         });
         await newStaging.save();
-        startLoopProcessor(io, endTime);
+        startLoopProcess(io, endTime);
     }
 };
 

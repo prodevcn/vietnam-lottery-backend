@@ -74,6 +74,21 @@ exports.getAllOrderForUser = (req, res, next) => {
             next(err);
         })
 };
+
+exports.getAllOrders = (req, res, next) => {
+    const { userId, gameType } = req.body;
+    Order.find({userId: userId, gameType: gameType}).sort({createdAt: -1})
+        .then(data => {
+            console.log('[SUCCESS]:[FETCHING_ALL_GAME_HISTORY]');
+            return res.send(data);
+        })
+        .catch(err => {
+            console.log('[ERROR]:[FETCHING_ALL_GAME_HISTORY]');
+            res.status(400);
+            next(err);
+        })
+}
+
 exports.getNewGameInfo = (req, res) => {
     const { gameType } = req.params;
     Staging.findOne({gameType})
