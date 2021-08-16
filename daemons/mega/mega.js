@@ -1,35 +1,31 @@
-const Staging = require('../models/staging');
-const Order = require('../models/order');
-const User = require('../models/user');
-const Result = require('../models/result');
-const History = require('../models/history');
+const Staging = require('../../models/staging');
+const Order = require('../../models/order');
+const User = require('../../models/user');
+const Result = require('../../models/result');
+const History = require('../../models/history');
 const {
     createMegaLottoNumbers
-} = require('./lib');
-const {durations, winRates} = require('../config/game');
+} = require('../lib');
+const {durations, winRates} = require('../../config/game');
 
 const processOrders = async (io, prevEndTime) => {
-    console.log('[PROCESS_ORDER]');
     let lottoNumbers = createMegaLottoNumbers();
-    console.log(lottoNumbers);
     let newResult = new Result({
         endTime: prevEndTime,
         gameType: 'mega',
         numbers: lottoNumbers
     });
-
     await newResult.save();
     await Staging.updateOne({gameType: 'mega'}, {numbers: lottoNumbers});
     let orders = await Order.find({gameType: 'mega', processed: false});
     if (orders.length === 0) {
         let endTime = Date.now() + durations.mega;
         await Staging.updateOne({gameType: "mega"}, {endTime: endTime });
-        io.in('mega').emit('new game start');
+        io.in('mega').emit('new game start', 'mega');
         startLoopProcess(io, endTime);
     } else {
         for(let order of orders) {
-            switch(order.betType) {
-                
+            switch(order.betType) {                
                 default:
                     break;
             }
@@ -37,10 +33,9 @@ const processOrders = async (io, prevEndTime) => {
         // await Order.deleteMany({});
         let endTime = Date.now() + durations.mega;
         await Staging.updateOne({gameType: "mega"}, {endTime: endTime });
-        io.in('mega').emit('new game start');
+        io.in('mega').emit('new game start', 'mega');
         startLoopProcess(io, endTime);
     }
-
     await newResult.save();
     await Staging.updateOne
 
@@ -51,7 +46,7 @@ const startLoopProcess = async (io, endTime) => {
     let interval = setInterval(() => {
         duration -= 1000;
         console.log(duration);
-        io.in('mega').emit('timer', duration);
+        io.in('mega').emit('timer', {duration: duration, game: 'mega'});
         if(duration < 0) {
             clearInterval(interval);
             processOrders(io, endTime);

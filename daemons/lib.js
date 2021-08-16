@@ -1,16 +1,5 @@
 const _ = require("lodash");
 /** create random lotto number */
-exports.createLottoNumbers = () => {
-    const redAward = (""+Math.random()).substring(2,7);
-    const first = (""+Math.random()).substring(2,7);
-    const second = (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7);
-    const third = (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7) + "-"+ (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7);
-    const fourth = (""+Math.random()).substring(2,6) + "-" + (""+Math.random()).substring(2,6) + "-" + (""+Math.random()).substring(2,6) + "-" +  (""+Math.random()).substring(2,6);
-    const fifth = (""+Math.random()).substring(2,6) + "-" + (""+Math.random()).substring(2,6) + "-" + (""+Math.random()).substring(2,6) + "-"+ (""+Math.random()).substring(2,6) + "-" + (""+Math.random()).substring(2,6) + "-" + (""+Math.random()).substring(2,6);
-    const sixth = (""+Math.random()).substring(2,5) + "-" + (""+Math.random()).substring(2,5) + "-" + (""+Math.random()).substring(2,5);
-    const seventh = (""+Math.random()).substring(2,4) + "-" + (""+Math.random()).substring(2,4) + "-" + (""+Math.random()).substring(2,4) + "-"+ (""+Math.random()).substring(2,4);
-    return {redAward: redAward, first: first, second: second, third: third, fourth: fourth, fifth: fifth, sixth: sixth, seventh: seventh};
-};
 
 exports.getLast2digits = value => {
     let arr = [];
@@ -132,15 +121,67 @@ exports.get4PinRedAward = value => {
 };
 
 
-/** create random numbers for mega lottery */
-exports.createMegaLottoNumbers = () => {
-    const labels = ["first", "second", "third", "fourth", "fifth", "sixth"];
-    const _target = {};
-    for (let label of labels) {
-        let num = _.random(0, 45);
-        if (num < 10) num = '0' + num;
-        else num = num.toString();
-        _target[label] = num;
-    }
-    return _target;
+/** create random numbers for lottery */
+exports.create27LottoNumbers = () => {
+  const redAward = (""+Math.random()).substring(2,7);
+  const first = (""+Math.random()).substring(2,7);
+  const second = (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7);
+  const third = (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7) + "-"+ (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7);
+  const fourth = (""+Math.random()).substring(2,6) + "-" + (""+Math.random()).substring(2,6) + "-" + (""+Math.random()).substring(2,6) + "-" +  (""+Math.random()).substring(2,6);
+  const fifth = (""+Math.random()).substring(2,6) + "-" + (""+Math.random()).substring(2,6) + "-" + (""+Math.random()).substring(2,6) + "-"+ (""+Math.random()).substring(2,6) + "-" + (""+Math.random()).substring(2,6) + "-" + (""+Math.random()).substring(2,6);
+  const sixth = (""+Math.random()).substring(2,5) + "-" + (""+Math.random()).substring(2,5) + "-" + (""+Math.random()).substring(2,5);
+  const seventh = (""+Math.random()).substring(2,4) + "-" + (""+Math.random()).substring(2,4) + "-" + (""+Math.random()).substring(2,4) + "-"+ (""+Math.random()).substring(2,4);
+  return {redAward: redAward, first: first, second: second, third: third, fourth: fourth, fifth: fifth, sixth: sixth, seventh: seventh};
 };
+
+exports.createMegaLottoNumbers = () => {
+  var numbers = [];
+  var size = 6;
+  var lowest = 0;
+  var highest = 45;
+  for(var i = 0; i < size; i++) {
+    var add = true;
+    var randomNumber = Math.floor(Math.random() * highest) + 1;
+    for(var y = 0; y < highest; y++) {
+      if(numbers[y] == randomNumber) {
+        add = false;
+      }
+    }
+    if(add) {
+      numbers.push(randomNumber);
+    } else {
+      i--;
+    }
+  }    
+  var highestNumber = 0;
+  for(var m = 0; m < numbers.length; m++) {
+    for(var n = m + 1; n < numbers.length; n++) {
+      if(numbers[n] < numbers[m]) {
+        highestNumber = numbers[m];
+        numbers[m] = numbers[n];
+        numbers[n] = highestNumber;
+      }
+    }
+  }   
+  const labels = ["first", "second", "third", "fourth", "fifth", "sixth"];
+  const _target = {};
+  for (let index = 0; index < 6; index ++) {
+    _target[labels[index]] = numbers[index] > 9 ? numbers[index].toString() : '0' + numbers[index];
+  }
+  return _target;
+};
+
+exports.create18LottoNumbers = () => {
+  const redAward = (""+Math.random()).substring(2,8);
+  const first = (""+Math.random()).substring(2,7);
+  const second = (""+Math.random()).substring(2,7);
+  const third = (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7);
+  const fourth = (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7) + "-"+ (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7) + "-" + (""+Math.random()).substring(2,7);
+  const fifth = (""+Math.random()).substring(2,6);
+  const sixth = (""+Math.random()).substring(2,6) + "-" + (""+Math.random()).substring(2,6) + "-" + (""+Math.random()).substring(2,6);
+  const seventh = (""+Math.random()).substring(2,5);
+  const eighth = (""+Math.random()).substring(2,4);
+  return {redAward: redAward, first: first, second: second, third: third, fourth: fourth, fifth: fifth, sixth: sixth, seventh: seventh, eighth: eighth};
+};
+
+

@@ -1,10 +1,10 @@
-const Staging = require('../models/staging');
-const Order = require('../models/order');
-const User = require('../models/user');
-const Result = require('../models/result');
-const History = require('../models/history');
+const Staging = require('../../models/staging');
+const Order = require('../../models/order');
+const User = require('../../models/user');
+const Result = require('../../models/result');
+const History = require('../../models/history');
 const {
-    createLottoNumbers,
+    create27LottoNumbers,
     getLast2digits,
     getFirst2digits,
     getLast3digits,
@@ -18,8 +18,8 @@ const {
     get3PinHeadAndTail,
     get3PinRedAward,
     get4PinRedAward,
-} = require('./lib');
-const {durations, winRates} = require('../config/game');
+} = require('../lib');
+const {durations, winRates} = require('../../config/game');
 
 const saveHistory = async (order, totalPoints, matched_count, lottoNumbers) => {
     let ordered_userInfo = await User.findOne({_id: order.userId});
@@ -371,7 +371,7 @@ const processJackpot = async (order, lottoNumbers) => {
 
 const processOrders = async (io, prevEndTime) => {
     console.log('[PROCESS_ORDER]');
-    let lottoNumbers = createLottoNumbers();
+    let lottoNumbers = create27LottoNumbers();
     let newResult = new Result({
         endTime: prevEndTime,
         gameType: 'northern',
@@ -385,11 +385,10 @@ const processOrders = async (io, prevEndTime) => {
     if (orders.length === 0) {
         let endTime = Date.now() + durations.normal;
         await Staging.updateOne({gameType: "northern"}, {endTime: endTime });
-        io.in('northern').emit('new game start');
+        io.in('northern').emit('new game start', 'northern');
         startLoopProcess(io, endTime);
     }
     else {
-        console.log('=======================================');
         for(let order of orders) {
             switch(order.betType) {
                 case 'backpack': {
@@ -432,7 +431,7 @@ const processOrders = async (io, prevEndTime) => {
         // await Order.deleteMany({});
         let endTime = Date.now() + durations.normal;
         await Staging.updateOne({gameType: "northern"}, {endTime: endTime });
-        io.in('northern').emit('new game start');
+        io.in('northern').emit('new game start', 'northern');
         startLoopProcess(io, endTime);
     }
 }
@@ -442,7 +441,7 @@ const startLoopProcess = async (io, endTime) => {
     let interval = setInterval(() => {
         duration -= 1000;
         console.log(duration);
-        io.in('northern').emit('timer', duration);
+        io.in('northern').emit('timer', {duration: duration, game: 'northern'});
         if(duration < 0) {
             clearInterval(interval);
             processOrders(io, endTime);

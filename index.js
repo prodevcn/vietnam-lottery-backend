@@ -5,8 +5,11 @@ const passport = require('passport');
 const { Server } = require('socket.io');
 
 const router = require('./router');
-const { startNorthernDaemon } = require('./daemons/northern');
-const { startMegaDaemon } = require('./daemons/mega');
+const { startNorthernDaemon } = require('./daemons/northern/northern');
+const { startMegaDaemon } = require('./daemons/mega/mega');
+const { startHanoiDaemon } = require('./daemons/vip/hanoi');
+const { startHochiminhDaemon } = require('./daemons/vip/hochiminh');
+const { startSaigonDaemon } = require('./daemons/vip/saigon');
 const socketEvents = require('./helpers/socketEvents');
 const conf = require('./config/main');
 
@@ -63,5 +66,8 @@ router(app);
 
 startNorthernDaemon(io);
 startMegaDaemon(io);
+startHanoiDaemon(io);
+startHochiminhDaemon(io);
+startSaigonDaemon(io);
 
 module.exports = server;

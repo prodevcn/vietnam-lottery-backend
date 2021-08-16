@@ -2,8 +2,6 @@ const User = require('../models/user');
 const Order = require('../models/order');
 
 exports.saveBet = async (req, res) => {
-    // const {userId, betAmount} = req.body;
-    console.log(req.body);
     const orders = req.body;
     for (let order of orders) {
         const {userId, betAmount} = order;
