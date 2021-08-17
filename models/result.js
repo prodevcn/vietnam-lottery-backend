@@ -1,26 +1,29 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-const ResultSchema = new Schema({
+const ResultSchema = new Schema(
+  {
     numbers: {
-        type: Object,
-        required: true
+      type: Object,
+      required: true,
     },
     gameType: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     endTime: {
-        type: Date,
-        default: Date.now()
-    }
-},{
-    timestamps: true
-});
+      type: Date,
+      default: Date.now(),
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-ResultSchema.set('toJSON', {
-    virtuals: true
+ResultSchema.set("toJSON", {
+  virtuals: true,
 });
 
 module.exports = Result = mongoose.model("result", ResultSchema);
