@@ -204,7 +204,7 @@ exports.create27LottoNumbers = () => {
 exports.createMegaLottoNumbers = () => {
   var numbers = [];
   var size = 6;
-  var lowest = 0;
+  var lowest = 1;
   var highest = 45;
   for (var i = 0; i < size; i++) {
     var add = true;

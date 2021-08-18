@@ -76,7 +76,7 @@ exports.getAllResultForGameType = (req, res, next) => {
   const { gameType } = req.params;
   Result.find({ gameType })
     .sort({ endTime: -1 })
-    .limit(100)
+    .limit(50)
     .then((data) => {
       console.log("[SUCCESS]:[FETCHING_GAME_HISTORY]");
       return res.json(data);
