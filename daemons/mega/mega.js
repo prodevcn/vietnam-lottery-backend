@@ -372,7 +372,6 @@ const startLoopProcess = async (io, endTime) => {
   let duration = endTime - Date.now();
   let interval = setInterval(() => {
     duration -= 1000;
-    console.log(duration);
     io.in("mega").emit("timer", { duration: duration, game: "mega" });
     if (duration < 0) {
       clearInterval(interval);

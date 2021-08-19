@@ -378,7 +378,6 @@ const processOrders = async (io, prevEndTime) => {
   await newResult.save();
   await Staging.updateOne({ gameType: "northern" }, { numbers: lottoNumbers });
   let orders = await Order.find({ gameType: "northern", processed: false });
-  console.log(orders);
   if (orders.length === 0) {
     let endTime = Date.now() + durations.normal;
     await Staging.updateOne({ gameType: "northern" }, { endTime: endTime });
@@ -436,7 +435,6 @@ const startLoopProcess = async (io, endTime) => {
   let duration = endTime - Date.now();
   let interval = setInterval(() => {
     duration -= 1000;
-    console.log(duration);
     io.in("northern").emit("timer", { duration: duration, game: "northern" });
     if (duration < 0) {
       clearInterval(interval);

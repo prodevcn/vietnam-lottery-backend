@@ -435,7 +435,6 @@ const startLoopProcess = async (io, endTime) => {
   let duration = endTime - Date.now();
   let interval = setInterval(() => {
     duration -= 1000;
-    console.log(duration);
     io.in("hanoi").emit("timer", { duration: duration, game: "hanoi" });
     if (duration < 0) {
       clearInterval(interval);

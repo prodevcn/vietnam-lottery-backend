@@ -421,7 +421,6 @@ const startLoopProcess = async (io, endTime) => {
   let duration = endTime - Date.now();
   let interval = setInterval(() => {
     duration -= 1000;
-    console.log(duration);
     io.in("superspeed").emit("timer", { duration: duration, game: "superspeed" });
     if (duration < 0) {
       clearInterval(interval);
