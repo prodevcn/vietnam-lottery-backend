@@ -2,7 +2,8 @@ module.exports = {
   durations: {
     // normal: 86400000, // 24 hours
     normal: 60000,
-    mega: 60000, // 1 mins
+    mega: 6000, // 1 mins
+    superspeed: 6000,
   },
   winRates: {
     lot27: {
@@ -81,6 +82,33 @@ module.exports = {
         jackpot: 85000,
       },
     },
+    lot6: {
+      normal: {
+        normal: 3000,
+      },
+      multiple: {
+        multiple4: 3000,
+        multiple3: 3000,
+        multiple3_2: 3000,
+        multiple2: 3000
+      },
+      slide: {
+        slide5: 3000,
+        slide6: 3000,
+        slide7: 3000,
+        slide8: 3000,
+        slide9: 3000,
+        slide10: 3000,
+      },
+      select: {
+        choose5: 3000,
+        choose6: 3000,
+        choose7: 3000,
+        choose8: 3000,
+        choose9: 3000,
+        choose10: 3000,
+      }
+    }
   },
   betRates: {
     backpack: {

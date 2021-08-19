@@ -22,7 +22,6 @@ const { durations, winRates } = require("../../config/game");
 
 const saveHistory = async (order, totalPoints, matched_count, lottoNumbers) => {
   let ordered_userInfo = await User.findOne({ _id: order.userId });
-  console.log(lottoNumbers);
   let newHistory = new History({
     userId: order.userId,
     gameType: "northern",
@@ -54,7 +53,7 @@ const processBackpack = async (order, lottoNumbers) => {
       if (matched_count == 0) {
         totalPoints = 0;
       } else {
-        totalPoints = (2 * matched_count - 1) * winRates.lot27.backpack.lot2 * order.multiple;
+        totalPoints = (2 * matched_count - 1) * (winRates).lot27.backpack.lot2 * order.multiple;
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;

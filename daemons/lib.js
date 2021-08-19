@@ -389,3 +389,8 @@ exports.getScoreHeadAndTail_18 = (value) => {
   arr.push(value.eighth);
   return arr;
 };
+
+exports.getAllLot6Numbers = (value) => {
+  return Object.keys(value).map((item) => {return value[item]})
+}
+

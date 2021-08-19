@@ -3,8 +3,326 @@ const Order = require("../../models/order");
 const User = require("../../models/user");
 const Result = require("../../models/result");
 const History = require("../../models/history");
-const { createMegaLottoNumbers } = require("../lib");
+const { createMegaLottoNumbers, getAllLot6Numbers } = require("../lib");
 const { durations, winRates } = require("../../config/game");
+
+const getCombinations = (arr, selectNumber) => {
+  const results = [];
+  if (selectNumber === 1) return arr.map((value) => [value]);
+  arr.forEach((fixed, index, origin) => {
+    const rest = origin.slice(index + 1);
+    const combinations = getCombinations(rest, selectNumber - 1);
+    const attached = combinations.map((combination) => [fixed, ...combination]);
+    results.push(...attached);
+  });
+
+  return results;
+}
+
+const saveHistory = async (order, totalPoints, matched_count, lottoNumbers) => {
+  let ordered_userInfo = await User.findOne({ _id: order.userId });
+  let newHistory = new History({
+    userId: order.userId,
+    gameType: "mega",
+    betType: order.betType,
+    digitType: order.digitType,
+    resultNumbers: lottoNumbers,
+    numbers: order.numbers,
+    multiple: order.multiple,
+    betAmount: order.betAmount,
+    winningAmount: totalPoints,
+    processed: true,
+    status: matched_count > 0 ? "win" : "lose",
+  });
+  await newHistory.save();
+  await User.updateOne({ _id: order.userId }, { balance: ordered_userInfo.balance + totalPoints });
+  await Order.updateOne({ _id: order._id }, { processed: true, status: matched_count > 0 ? "win" : "lose" });
+};
+
+const processNormal = async (order, lottoNumbers) => {
+  let totalPoints = 0;
+  let matched_count = 0;
+  let order_numbers = order.numbers.split(";");
+  order_numbers.pop();
+  matched_count = order_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+  if (matched_count == 0) {
+    totalPoints = 0;
+  } else {
+    totalPoints = (2 * matched_count - 1) * (winRates).lot6.normal.normal * order.multiple;
+  }
+  await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+  return;  
+};
+
+const processMultiple = async (order, lottoNumbers) => {
+  let totalPoints = 0;
+  let matched_count = 0;
+  let order_numbers = order.numbers.split(";");
+  let paired_numbers_arr = [];
+  order_numbers.pop();
+  switch(order.digitType) {
+    case "multiple4":
+      paired_numbers_arr = getCombinations(order_numbers, 4);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 4) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.multiple.multiple4 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    case "multiple3":
+      paired_numbers_arr = getCombinations(order_numbers, 3);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 3) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.multiple.multiple4 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    case "multiple3_2":
+      paired_numbers_arr = getCombinations(order_numbers, 3);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 3) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.multiple.multiple4 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    case "multiple2":
+      paired_numbers_arr = getCombinations(order_numbers, 2);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 2) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.multiple.multiple4 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    default:
+      return;   
+  }
+};
+
+const processSlide = async (order, lottoNumbers) => {
+  let totalPoints = 0;
+  let matched_count = 0;
+  let order_numbers = order.numbers.split(";");
+  let paired_numbers_arr = [];
+  order_numbers.pop();
+  switch(order.digitType) {
+    case "slide5":
+      paired_numbers_arr = getCombinations(order_numbers, 5);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 0 ) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide5 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    case "slide5":
+      paired_numbers_arr = getCombinations(order_numbers, 5);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 0 ) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide5 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    case "slide6":
+      paired_numbers_arr = getCombinations(order_numbers, 6);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 0 ) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide6 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    case "slide7":
+      paired_numbers_arr = getCombinations(order_numbers, 7);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 0 ) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide7 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    case "slide8":
+      paired_numbers_arr = getCombinations(order_numbers, 8);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 0 ) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide8 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    case "slide9":
+      paired_numbers_arr = getCombinations(order_numbers, 9);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 0 ) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide9 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    case "slide10":
+      paired_numbers_arr = getCombinations(order_numbers, 10);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 0 ) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide10 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    default:
+      return;
+  }
+};
+
+const processSelect = async (order, lottoNumbers) => {
+  let totalPoints = 0;
+  let matched_count = 0;
+  let order_numbers = order.numbers.split(";");
+  let paired_numbers_arr = [];
+  order_numbers.pop();
+  switch(order.digitType) {
+    case "slide5":
+      paired_numbers_arr = getCombinations(order_numbers, 5);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 1 ) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide5 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    case "slide5":
+      paired_numbers_arr = getCombinations(order_numbers, 5);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 1 ) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide5 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    case "slide6":
+      paired_numbers_arr = getCombinations(order_numbers, 6);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 1 ) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide6 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    case "slide7":
+      paired_numbers_arr = getCombinations(order_numbers, 7);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 1 ) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide7 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    case "slide8":
+      paired_numbers_arr = getCombinations(order_numbers, 8);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 1 ) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide8 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    case "slide9":
+      paired_numbers_arr = getCombinations(order_numbers, 9);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 1 ) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide9 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    case "slide10":
+      paired_numbers_arr = getCombinations(order_numbers, 10);
+      for (let paired_numbers of paired_numbers_arr) {
+        let sub_matched_count = paired_numbers.filter((e) => getAllLot6Numbers(lottoNumbers).includes(e)).length;
+        if (sub_matched_count == 1 ) matched_count ++; 
+      }
+      if (matched_count == 0) {
+        totalPoints = 0;
+      } else {
+        totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide10 * order.multiple;
+      }
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      return;
+    default:
+      return;
+  }
+};
 
 const processOrders = async (io, prevEndTime) => {
   let lottoNumbers = createMegaLottoNumbers();
@@ -24,6 +342,18 @@ const processOrders = async (io, prevEndTime) => {
   } else {
     for (let order of orders) {
       switch (order.betType) {
+        case "normal":
+          await processNormal(order, lottoNumbers);
+          break;
+        case "multiple":
+          await processMultiple(order, lottoNumbers);
+          break;
+        case "slide":
+          await processSlide(order, lottoNumbers);
+          break;
+        case "select":
+          await processSelect(order, lottoNumbers);
+          break;
         default:
           break;
       }

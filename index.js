@@ -11,6 +11,7 @@ const { startMegaDaemon } = require("./daemons/mega/mega");
 const { startHanoiDaemon } = require("./daemons/vip/hanoi");
 const { startHochiminhDaemon } = require("./daemons/vip/hochiminh");
 const { startSaigonDaemon } = require("./daemons/vip/saigon");
+const { startSuperspeedDaemon } = require("./daemons/superspeed/superspeed");
 const socketEvents = require("./helpers/socketEvents");
 const conf = require("./config/main");
 
@@ -78,5 +79,6 @@ startMegaDaemon(io);
 startHanoiDaemon(io);
 startHochiminhDaemon(io);
 startSaigonDaemon(io);
+startSuperspeedDaemon(io);
 
 module.exports = server;
