@@ -1,5 +1,5 @@
 module.exports = {
-  secret: "klvmosesongerca",
+  secret: "A2a2Fb$(mHaOk7F",
   port: 4332,
   confirmEmail: "",
   confirmEmailPwd: "",

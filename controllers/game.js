@@ -50,7 +50,19 @@ exports.getAllLatestResults = (req, res) => {
       });
   });
 
-  Promise.all([northern, saigon, hochiminh, hanoi])
+  const mega = new Promise((resolve, reject) => {
+    Result.findOne({ gameType: "mega" })
+      .sort({ endTime: -1 })
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((err) => {
+        console.error(err);
+        reject(err);
+      });
+  });
+
+  Promise.all([northern, saigon, hochiminh, hanoi, mega])
     .then((response) => {
       return res.json(response);
     })
