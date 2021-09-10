@@ -5,21 +5,33 @@ const { Schema } = mongoose;
 
 const UserSchema = new Schema(
   {
-    email: {
+    userId: {
       type: String,
       required: true,
+    },
+    userName: {
+      type: String,
+      required: true,
+    },
+    token: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: false,
     },
     password: {
       type: String,
-      required: true,
+      required: false,
     },
     firstName: {
       type: String,
-      required: true,
+      required: false,
     },
     lastName: {
       type: String,
-      required: true,
+      required: false,
     },
     balance: {
       type: Number,
@@ -31,9 +43,9 @@ const UserSchema = new Schema(
   }
 );
 
-UserSchema.set("toJSON", {
-  virtuals: true,
-});
+// UserSchema.set("toJSON", {
+//   virtuals: true,
+// });
 
 UserSchema.methods.comparePassword = function (candidatePassword, cb) {
   bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {

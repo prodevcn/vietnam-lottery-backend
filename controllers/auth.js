@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt-nodejs");
-const nodeMailer = require("nodemailer");
 
 const { setUserInfo } = require("../helpers");
 const conf = require("../config/main");
@@ -24,6 +23,44 @@ exports.login = (req, res) => {
     user: user,
   });
 };
+
+exports.auth = (req, res) => {
+  const {gamehost, userid, username} = req.query;
+  User.findOne({userId: userid})
+    .then(user => {
+      if(user) {
+        res.send({code: 0, data: {
+          userId: user.userId,
+          userName: user.userName,
+          token: user.token
+        },  error:null});
+      } else {
+        if(gamehost === 'lotopoka') {
+          const newUser = new User({
+            userId: userid,
+            userName: username,
+            token: generateToken({userId: userid, userName: username,})
+          });
+          newUser.save()
+            .then(savedUser => {
+              res.send({code: 0 , data: {
+                userId: savedUser.userId,
+                userName: savedUser.userName,
+                token: savedUser.token
+              },  error:null});
+            })
+            .catch(err => {
+              console.log('[ERROR]:[IFRAME_CHECK_USER]', err);
+              res.send({code: -1 , data: null, error:'Something went wrong!'});
+            })
+        }
+      }
+    })
+    .catch(err => {
+      console.log('[ERROR]:[IFRAME_CHECK_USER]', err);
+      res.send({code: -1 , data: null,  error:'Something went wrong!'})
+    })
+}
 
 exports.getUserInfo = (req, res) => {
   const { userId } = req.params;

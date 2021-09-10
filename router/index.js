@@ -22,6 +22,7 @@ module.exports = (app) => {
   apiRoutes.use("/game", gameRoutes);
 
   /** auth routing */
+  authRoutes.get("/authenticate", AuthController.auth);
   authRoutes.post("/register", AuthController.register);
   authRoutes.post("/login", requireLogin, AuthController.login);
   authRoutes.get("/get-user-info/:userId", requireAuth, AuthController.getUserInfo);
