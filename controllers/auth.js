@@ -40,7 +40,7 @@ exports.auth = (req, res) => {
           data: {
             userId: user.userId,
             userName: user.userName,
-            token: 'JWT ' + user.token
+            token: user.token
           },  
           error:null
         });
@@ -57,7 +57,7 @@ exports.auth = (req, res) => {
               data: {
                 userId: savedUser.userId,
                 userName: savedUser.userName,
-                token: 'JWT '+ savedUser.token
+                token: savedUser.token
               },  
               error:null
             });
