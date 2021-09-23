@@ -25,40 +25,60 @@ exports.login = (req, res) => {
 };
 
 exports.auth = (req, res) => {
-  const {gamehost, userid, username} = req.query;
+  const { userid, username} = req.query;
+  if(!userid || !username)
+    return res.send({
+      code: 1,
+      data: null,
+      error: 'Invalid URL parameters'
+    });
   User.findOne({userId: userid})
     .then(user => {
       if(user) {
-        res.send({code: 0, data: {
-          userId: user.userId,
-          userName: user.userName,
-          token: user.token
-        },  error:null});
+        res.send({
+          code: 0, 
+          data: {
+            userId: user.userId,
+            userName: user.userName,
+            token: user.token
+          },  
+          error:null
+        });
       } else {
-        if(gamehost === 'lotopoka') {
-          const newUser = new User({
-            userId: userid,
-            userName: username,
-            token: generateToken({userId: userid, userName: username,})
-          });
-          newUser.save()
-            .then(savedUser => {
-              res.send({code: 0 , data: {
+        const newUser = new User({
+          userId: userid,
+          userName: username,
+          token: generateToken({userId: userid, userName: username,})
+        });
+        newUser.save()
+          .then(savedUser => {
+            res.send({
+              code: 0 , 
+              data: {
                 userId: savedUser.userId,
                 userName: savedUser.userName,
                 token: savedUser.token
-              },  error:null});
-            })
-            .catch(err => {
-              console.log('[ERROR]:[IFRAME_CHECK_USER]', err);
-              res.send({code: -1 , data: null, error:'Something went wrong!'});
-            })
-        }
+              },  
+              error:null
+            });
+          })
+          .catch(err => {
+            console.log('[ERROR]:[IFRAME_CHECK_USER]', err);
+            res.send({
+              code: 3 , 
+              data: null, 
+              error:'Failed to create the new token'
+            });
+          });
       }
     })
     .catch(err => {
       console.log('[ERROR]:[IFRAME_CHECK_USER]', err);
-      res.send({code: -1 , data: null,  error:'Something went wrong!'})
+      res.send({
+        code: 2 , 
+        data: null,  
+        error:'Failed to get the user information'
+      });
     })
 }
 
