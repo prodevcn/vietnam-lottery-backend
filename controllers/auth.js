@@ -57,7 +57,7 @@ exports.auth = (req, res) => {
               data: {
                 userId: savedUser.userId,
                 userName: savedUser.userName,
-                token: savedUser.token
+                token: 'JWT '+ savedUser.token
               },  
               error:null
             });
