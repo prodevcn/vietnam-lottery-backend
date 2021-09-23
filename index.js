@@ -20,7 +20,7 @@ const conf = require("./config/main");
 
 const options = {
   key: fs.readFileSync('/var/www/lotopoka/lotopoka.com.key'),
-  cert: fs.readFileSync('/var/www/lotopoka/lotopoka.com.chained.crt')
+  cert: fs.readFileSync('/var/www/lotopoka/lotopoka.com.csr')
 }
 
 mongoose
