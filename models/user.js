@@ -27,9 +27,6 @@ const UserSchema = new Schema(
   }
 );
 
-// UserSchema.set("toJSON", {
-//   virtuals: true,
-// });
 
 UserSchema.methods.comparePassword = function (candidatePassword, cb) {
   bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
