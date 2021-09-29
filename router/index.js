@@ -6,6 +6,7 @@ const passport = require("passport");
 const AuthController = require("../controllers/auth");
 const GameController = require("../controllers/game");
 const BetController = require("../controllers/bet");
+const CommonController = require("../controllers/common");
 
 const requireAuth = passport.authenticate("jwt", { session: false });
 const requireLogin = passport.authenticate("local", { session: false });
@@ -20,6 +21,7 @@ module.exports = (app) => {
   /* sort routes according url */
   apiRoutes.use("/auth", authRoutes);
   apiRoutes.use("/game", gameRoutes);
+  apiRoutes.post("/get-balance", requireAuth, CommonController.getBalanceFromMainService);
 
   /** auth routing */
   authRoutes.get("/authenticate", AuthController.auth);

@@ -4,4 +4,5 @@ module.exports = {
   confirmEmail: "",
   confirmEmailPwd: "",
   db_url: "mongodb://localhost:27017/lottery",
+  service_url: "https://sonicxgame.com/api/v1/sonicx/lotopoka"
 };
