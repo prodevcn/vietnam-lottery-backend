@@ -68,12 +68,12 @@ exports.auth = (req, res) => {
 
 exports.getUserInfo = (req, res) => {
   const { userId } = req.params;
-  User.findOne({ _id: userId })
+  User.findOne({ userId: userId })
     .then((user) => {
       return res.send(user);
     })
     .catch((err) => {
-      console.log("[ERROR]:[GET_USER_INFO]");
+      console.log("[ERROR]:[GET_USER_INFO]", err);
     });
 };
 
