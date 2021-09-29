@@ -16,6 +16,7 @@
     "server-side"
   ],
   "dependencies": {
+    "axios": "^0.21.4",
     "bcrypt-nodejs": "^0.0.3",
     "bcryptjs": "^2.4.3",
     "concurrently": "^6.2.0",

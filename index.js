@@ -6,6 +6,7 @@ const passport = require("passport");
 const http = require("http");
 const https = require("https");
 const fs = require("fs");
+const axios = require('axios');
 const { Server } = require("socket.io");
 
 const router = require("./router");
@@ -89,5 +90,21 @@ startHanoiDaemon(io);
 startHochiminhDaemon(io);
 startSaigonDaemon(io);
 startSuperspeedDaemon(io);
+
+axios.get(
+  'https://sonicxgame.com/api/v1/sonicx/lotopoka/get-balance', 
+  {
+    headers: {
+      'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ2MjRfMTYxOTk5MTMyNjA4NiIsInVzZXJOYW1lIjoiQmh0Y2FzaW5vIGxvdWlzLm5ndXllbiIsImlhdCI6MTYzMjQyNjI0MSwiZXhwIjoxNjMzMDMxMDQxfQ.7RYiwuCkqsMVucPBR4sbYOYdmcZ4qBm9h-5MxwiHCEY',
+      'Content-Type': 'application/json'
+    }
+  }
+)
+.then(response => {
+  console.log(response.data);
+})
+.catch(err => {
+  console.error(err);
+});
 
 module.exports = server;
