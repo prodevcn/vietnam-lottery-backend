@@ -17,25 +17,9 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
-    email: {
-      type: String,
-      required: false,
-    },
-    password: {
-      type: String,
-      required: false,
-    },
-    firstName: {
-      type: String,
-      required: false,
-    },
-    lastName: {
-      type: String,
-      required: false,
-    },
     balance: {
       type: Number,
-      default: 500000000,
+      default: 0,
     },
   },
   {
