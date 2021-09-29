@@ -19,11 +19,11 @@ const { startSuperspeedDaemon } = require("./daemons/superspeed/superspeed");
 const socketEvents = require("./helpers/socketEvents");
 const conf = require("./config/main");
 
-const options = {
-  key: fs.readFileSync('/var/www/lotopoka/lotopoka.com.key'),
-  cert: fs.readFileSync('/var/www/lotopoka/lotopoka.com.crt'),
-  ca: fs.readFileSync('/var/www/lotopoka/lotopoka.com.chained.crt')
-}
+// const options = {
+//   key: fs.readFileSync('/var/www/lotopoka/lotopoka.com.key'),
+//   cert: fs.readFileSync('/var/www/lotopoka/lotopoka.com.crt'),
+//   ca: fs.readFileSync('/var/www/lotopoka/lotopoka.com.chained.crt')
+// }
 
 mongoose
   .connect(process.env.DB_URL || conf.db_url, {
@@ -75,8 +75,8 @@ require("./config/passport")(passport);
 
 router(app);
 
-//const server = http.createServer(app);
-const server = https.createServer(options, app);
+const server = http.createServer(app);
+// const server = https.createServer(options, app);
 const io = new Server(server, { cors: corsOptions });
 socketEvents(io);
 
