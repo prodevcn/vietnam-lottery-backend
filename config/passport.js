@@ -4,11 +4,11 @@ const LocalStrategy = require("passport-local");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
-const conf = require("./main");
+const config = require("./index");
 
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme("jwt"),
-  secretOrKey: conf.secret,
+  secretOrKey: config.SECRET,
 };
 
 const localOptions = {

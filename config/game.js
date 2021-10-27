@@ -1,9 +1,10 @@
 module.exports = {
   durations: {
-    // normal: 86400000, // 24 hours
-    normal: 300000,
-    mega: 60000, // 1 mins
-    superspeed: 60000,
+    perDay: 24 * 3600 * 1000,
+    perWeek: 7 * 24 * 3600 * 1000,
+    perMinute: 60 * 1000,
+    per5Minutes: 5 * 60 * 1000,
+    per2Minutes: 2 * 60 * 1000,
   },
   winRates: {
     lot27: {

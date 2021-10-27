@@ -1,17 +1,42 @@
 const User = require("../models/user");
 const Order = require("../models/order");
+const axios = require('axios');
+const config = require('../config');
 
 exports.saveBet = async (req, res) => {
   const orders = req.body;
   for (let order of orders) {
     const { userId, betAmount } = order;
-    const user = await User.findOne({ _id: userId });
-    if (user.balance < betAmount) {
+    const user = await User.findOne({ userId: userId });
+    const balance = (await axios.get(`${config.SERVICE_URL}/get-balance`, {
+      headers: {
+          'Authorization': user.token,
+          'Content-Type': 'application/json'
+      }
+    })).data.data.balance;
+    
+    if (balance < betAmount) {
       return res.json({ msg: "Insufficient balance" });
     }
     const newOrder = new Order(order);
-    await User.updateOne({ _id: userId }, { balance: user.balance - betAmount });
-    await newOrder.save();
+    await User.updateOne({ userId: userId }, { balance: user.balance - betAmount });
+    const savedOrder = await newOrder.save();
+    await axios
+      .post(
+        `${config.SERVICE_URL}/create-transaction`, 
+        {
+          game: "lottopoka", 
+          transactionId: savedOrder._id, 
+          type: 'bet',
+          amount: betAmount, 
+        },
+        {
+          headers: {
+            'Authorization': user.token,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
   }
   return res.json({ msg: "success" });
   // User.findOne({_id: userId})

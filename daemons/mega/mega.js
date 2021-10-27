@@ -1,8 +1,10 @@
+const axios = require('axios');
 const Staging = require("../../models/staging");
 const Order = require("../../models/order");
 const User = require("../../models/user");
 const Result = require("../../models/result");
 const History = require("../../models/history");
+const config = require('../../config');
 const { createMegaLottoNumbers, getAllLot6Numbers } = require("../lib");
 const { durations, winRates } = require("../../config/game");
 
@@ -20,7 +22,7 @@ const getCombinations = (arr, selectNumber) => {
 }
 
 const saveHistory = async (order, totalPoints, matched_count, lottoNumbers) => {
-  let ordered_userInfo = await User.findOne({ _id: order.userId });
+  let ordered_userInfo = await User.findOne({ userId: order.userId });
   let newHistory = new History({
     userId: order.userId,
     gameType: "mega",
@@ -35,7 +37,22 @@ const saveHistory = async (order, totalPoints, matched_count, lottoNumbers) => {
     status: matched_count > 0 ? "win" : "lose",
   });
   await newHistory.save();
-  await User.updateOne({ _id: order.userId }, { balance: ordered_userInfo.balance + totalPoints });
+  await axios
+      .post(
+        `${config.SERVICE_URL}/create-transaction`, 
+        {
+          game: "lottopoka", 
+          transactionId: order._id + 'f', 
+          type: 'win',
+          amount: totalPoints, 
+        },
+        {
+          headers: {
+            'Authorization': ordered_userInfo.token,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
   await Order.updateOne({ _id: order._id }, { processed: true, status: matched_count > 0 ? "win" : "lose" });
 };
 
@@ -335,9 +352,9 @@ const processOrders = async (io, prevEndTime) => {
   await Staging.updateOne({ gameType: "mega" }, { numbers: lottoNumbers });
   let orders = await Order.find({ gameType: "mega", processed: false });
   if (orders.length === 0) {
-    let endTime = Date.now() + durations.mega;
+    let endTime = Date.now() + durations.perMinute;
     await Staging.updateOne({ gameType: "mega" }, { endTime: endTime });
-    io.in("mega").emit("new game start", "mega");
+    io.in("mega").emit("START_NEW_GAME", "mega");
     startLoopProcess(io, endTime);
   } else {
     for (let order of orders) {
@@ -359,9 +376,9 @@ const processOrders = async (io, prevEndTime) => {
       }
     }
     // await Order.deleteMany({});
-    let endTime = Date.now() + durations.mega;
+    let endTime = Date.now() + durations.perMinute;
     await Staging.updateOne({ gameType: "mega" }, { endTime: endTime });
-    io.in("mega").emit("new game start", "mega");
+    io.in("mega").emit("START_NEW_GAME", "mega");
     startLoopProcess(io, endTime);
   }
   await newResult.save();
@@ -372,7 +389,7 @@ const startLoopProcess = async (io, endTime) => {
   let duration = endTime - Date.now();
   let interval = setInterval(() => {
     duration -= 1000;
-    io.in("mega").emit("timer", { duration: duration, game: "mega" });
+    io.in("mega").emit("TIMER", { duration: duration, game: "mega" });
     if (duration < 0) {
       clearInterval(interval);
       processOrders(io, endTime);
@@ -387,12 +404,12 @@ exports.startMegaDaemon = async (io) => {
     if (gameInfo.endTime > Date.now()) {
       startLoopProcess(io, gameInfo.endTime);
     } else {
-      let newEndTime = Date.now() + durations.mega;
+      let newEndTime = Date.now() + durations.perMinute;
       await Staging.updateOne({ gameType: "mega" }, { endTime: newEndTime });
       startLoopProcess(io, newEndTime);
     }
   } else {
-    let endTime = Date.now() + durations.mega;
+    let endTime = Date.now() + durations.perMinute;
     let newStaging = new Staging({
       gameType: "mega",
       endTime: endTime,

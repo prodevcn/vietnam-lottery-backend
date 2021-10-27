@@ -1,5 +1,8 @@
 const _ = require("lodash");
-/** create random lotto number */
+const axios = require('axios');
+const config = require('../config');
+const parse = require('node-html-parser');
+const {sendEmail} = require('../helpers/mailer');
 
 exports.getLast2digits = (value) => {
   let arr = [];
@@ -394,3 +397,158 @@ exports.getAllLot6Numbers = (value) => {
   return Object.keys(value).map((item) => {return value[item]})
 }
 
+exports.getNorthernResultsFromConfirmURL = async () => {
+  const data = (await axios.get(config.RESULT_URL_NORTHERN)).data;
+  const phrase = parse.parse(data);
+  const tbody = phrase.getElementsByTagName('tbody')[0];
+  const tableRows = tbody.getElementsByTagName('tr');
+  const lottoPairs = [];
+  let lottoPair;
+  
+  const jackpot = tableRows[0].getElementsByTagName('td')[1].childNodes[0].rawText;
+  lottoPair = tableRows[0].getElementsByTagName('td')[3].childNodes[0].rawText;
+  lottoPairs.push(lottoPair.replace(/\s/g, ''));
+
+  lottoPairs.push(tableRows[1].getElementsByTagName('td')[3].childNodes[0].rawText.replace(/\s/g, ''));
+
+  const firstPrize = tableRows[2].getElementsByTagName('td')[1].childNodes[0].rawText;
+  lottoPairs.push(tableRows[2].getElementsByTagName('td')[3].childNodes[0].rawText.replace(/\s/g, ''));
+
+  let elements = tableRows[3].getElementsByTagName('td')[1].getElementsByTagName('span');
+  lottoPairs.push(tableRows[3].getElementsByTagName('td')[3].childNodes[0].rawText.replace(/\s/g, ''));
+  const secondPrize = elements[0].childNodes[0].rawText + '-' + elements[1].childNodes[0].rawText;
+  
+  
+  elements = tableRows[4].getElementsByTagName('td')[1].getElementsByTagName('span');
+  lottoPairs.push(tableRows[4].getElementsByTagName('td')[3].childNodes[0].rawText.replace(/\s/g, ''));
+  const thirdPrize = 
+    elements[0].childNodes[0].rawText + '-' +
+    elements[1].childNodes[0].rawText + '-' +
+    elements[2].childNodes[0].rawText + '-' +
+    elements[3].childNodes[0].rawText + '-' +
+    elements[4].childNodes[0].rawText + '-' +
+    elements[5].childNodes[0].rawText;
+  
+  elements = tableRows[5].getElementsByTagName('td')[1].getElementsByTagName('span');
+  lottoPairs.push(tableRows[5].getElementsByTagName('td')[3].childNodes[0].rawText.replace(/\s/g, ''));
+  const fourthPrize = 
+    elements[0].childNodes[0].rawText + '-' +
+    elements[1].childNodes[0].rawText + '-' +
+    elements[2].childNodes[0].rawText + '-' +
+    elements[3].childNodes[0].rawText;
+
+  elements = tableRows[6].getElementsByTagName('td')[1].getElementsByTagName('span');
+  lottoPairs.push(tableRows[6].getElementsByTagName('td')[3].childNodes[0].rawText.replace(/\s/g, ''));
+  const fifthPrize = 
+    elements[0].childNodes[0].rawText + '-' +
+    elements[1].childNodes[0].rawText + '-' +
+    elements[2].childNodes[0].rawText + '-' +
+    elements[3].childNodes[0].rawText + '-' +
+    elements[4].childNodes[0].rawText + '-' +
+    elements[5].childNodes[0].rawText;
+
+  elements = tableRows[7].getElementsByTagName('td')[1].getElementsByTagName('span');
+  lottoPairs.push(tableRows[7].getElementsByTagName('td')[3].childNodes[0].rawText.replace(/\s/g, ''));
+  const sixthPrize = 
+    elements[0].childNodes[0].rawText + '-' +
+    elements[1].childNodes[0].rawText + '-' +
+    elements[2].childNodes[0].rawText;
+
+  elements = tableRows[8].getElementsByTagName('td')[1].getElementsByTagName('span');
+  lottoPairs.push(tableRows[8].getElementsByTagName('td')[3].childNodes[0].rawText.replace(/\s/g, ''));
+  const seventhPrize = 
+    elements[0].childNodes[0].rawText + '-' +
+    elements[1].childNodes[0].rawText + '-' +
+    elements[2].childNodes[0].rawText + '-' +
+    elements[3].childNodes[0].rawText;
+  const numbers = {
+    redAward: jackpot,
+    first: firstPrize,
+    second: secondPrize,
+    third: thirdPrize,
+    fourth: fourthPrize,
+    fifth: fifthPrize,
+    sixth: sixthPrize,
+    seventh: seventhPrize,
+    pairs: lottoPairs
+  }
+  return numbers
+}
+
+exports.getNorthernResultsFromURL1 = async () => {
+  const data = (await axios.get(`${config.RESULT_URL1}/getkqxs/mien-bac.js`)).data;
+  const phrase = parse.parse(data);  
+  const tbody = phrase.getElementsByTagName('tbody')[0];
+  const tableRows = tbody.getElementsByTagName('tr');
+  const jackpot = tableRows[1].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  const firstPrize = tableRows[2].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  const secondPrize = tableRows[3].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  const thirdPrize = tableRows[4].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  const fourthPrize = tableRows[5].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  const fifthPrize = tableRows[6].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  const sixthPrize = tableRows[7].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  const seventhPrize = tableRows[8].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  return {
+    redAward: jackpot,
+    first: firstPrize,
+    second: secondPrize,
+    third: thirdPrize,
+    fourth: fourthPrize,
+    fifth: fifthPrize,
+    sixth: sixthPrize,
+    seventh: seventhPrize,
+    pairs: []
+  };
+}
+
+exports.getSouthernResultFromConfirmURL = async () => {
+  const data = (await axios.get(config.RESULT_URL_SOUTHERN)).data;
+  const phrase = parse.parse(data);
+  const tbody = phrase.getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
+  const tableRows = tbody.getElementsByTagName('tr');
+  
+  let eighthPrize = tableRows[0].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  let seventhPrize  = tableRows[1].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  let sixthPrize = tableRows[2].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  let fifthPrize = tableRows[3].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  let fourthPrize = tableRows[4].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  let thirdPrize = tableRows[5].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  let secondePrize = tableRows[6].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  let firstPrize = tableRows[7].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  let jackpot = tableRows[8].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+
+  return {
+    redAward: jackpot,
+    first: firstPrize,
+    second: secondePrize,
+    third: thirdPrize,
+    fourth: fourthPrize,
+    fifth: fifthPrize,
+    sixth: sixthPrize,
+    seventh: seventhPrize,
+    eighth: eighthPrize,
+    pairs: []
+  }
+}
+
+
+
+exports.getNorthernLottoNumbers = async () => {
+  northernResult1 = await getNorthernResultsFromConfirmURL();
+  northernResult2 = await this.getNorthernResultsFromURL1();
+  if(!northernResult1) return northernResult2;
+  if(!northernResult1 && !northernResult2) {
+    sendEmail();
+    return {};
+  }
+  return northernResult1;
+}
+
+exports.getSouthernHochiminhLottoNumbers = async () => {
+  southernResult = await this.getSouthernResultFromConfirmURL();
+  return southernResult;
+}
+
+exports.getCentralQuangNamLottoNumbers = async () => {
+  // return numbers;
+}

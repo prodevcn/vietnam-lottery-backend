@@ -1,12 +1,11 @@
+require('dotenv').config()
 const express = require("express");
-const cors = require("cors");
 const logger = require("morgan");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const http = require("http");
 const https = require("https");
 const fs = require("fs");
-const axios = require('axios');
 const { Server } = require("socket.io");
 
 const router = require("./router");
@@ -16,8 +15,11 @@ const { startHanoiDaemon } = require("./daemons/vip/hanoi");
 const { startHochiminhDaemon } = require("./daemons/vip/hochiminh");
 const { startSaigonDaemon } = require("./daemons/vip/saigon");
 const { startSuperspeedDaemon } = require("./daemons/superspeed/superspeed");
+const { startSouthernHochiminhDaemon } = require('./daemons/southern/hochiminh');
+const { startCentralQuanNamDaemon } = require('./daemons/central/quangnam');
+
 const socketEvents = require("./helpers/socketEvents");
-const conf = require("./config/main");
+const config = require("./config");
 
 const options = {
   key: fs.readFileSync('/var/www/lotopoka/lotopoka.com.key'),
@@ -26,7 +28,7 @@ const options = {
 }
 
 mongoose
-  .connect(process.env.DB_URL || conf.db_url, {
+  .connect(process.env.DB_URL || config.DB_URL, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useCreateIndex: true,
@@ -50,9 +52,6 @@ const corsOptions = {
   credentials: true,
 };
 
-app.use(express.static("public"));
-app.set("view engine", "ejs");
-
 /* Setting up basic middleware for all Express requests */
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(express.json({ limit: "50mb" }));
@@ -75,20 +74,22 @@ require("./config/passport")(passport);
 
 router(app);
 
-//const server = http.createServer(app);
+// const server = http.createServer(app);
 const server = https.createServer(options, app);
 const io = new Server(server, { cors: corsOptions });
 socketEvents(io);
 
-server.listen(conf.port, '0.0.0.0', function() {
-  console.log(`[SUCCESS]:[START]:[SERVER]:[AT]:[${conf.port}]]`);
+server.listen(config.PORT, '0.0.0.0', function() {
+  console.log(`[SUCCESS]:[START]:[SERVER]:[AT]:[${config.PORT}]]`);
 })
 
 startNorthernDaemon(io);
 startMegaDaemon(io);
+startSuperspeedDaemon(io);
 startHanoiDaemon(io);
 startHochiminhDaemon(io);
 startSaigonDaemon(io);
-startSuperspeedDaemon(io);
+startSouthernHochiminhDaemon(io);
+startCentralQuanNamDaemon(io);
 
 module.exports = server;

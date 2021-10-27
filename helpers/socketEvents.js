@@ -3,7 +3,7 @@ let lineHistory = [];
 module.exports = (io) => {
   console.log("[START]:[SOCKET]");
   io.on("connection", (socket) => {
-    // console.log('[SOCKET]:[USER]:[CONNECTED]');
+    console.log('[SOCKET]:[USER]:[CONNECTED]');
     socket.on("subscribe_timer", (room) => {
       socket.join(room);
     });

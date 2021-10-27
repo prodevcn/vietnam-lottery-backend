@@ -1,10 +1,9 @@
 const axios = require('axios');
-const conf = require("../config/main");
+const config = require("../config");
 
 exports.getBalanceFromMainService = (req, res) => {
     const {token, userId} = req.body;
-    console.log('[INFO]:[USER_TOKEN]:', token);
-    axios.get(`${conf.service_url}/get-balance`, {
+    axios.get(`${config.SERVICE_URL}/get-balance`, {
         headers: {
             'Authorization': token,
             'Content-Type': 'application/json'

@@ -1,14 +1,12 @@
-const axios = require('axios');
 const Staging = require("../../models/staging");
 const Order = require("../../models/order");
 const User = require("../../models/user");
 const Result = require("../../models/result");
 const History = require("../../models/history");
 const { durations, winRates } = require("../../config/game");
-const config = require('../../config');
-
+const config = require("../../config");
+const axios = require("axios");
 const {
-  create18LottoNumbers,
   getLast2digits_18,
   getLast3digits_18,
   getLast4digits_18,
@@ -20,14 +18,14 @@ const {
   get3PinRedAward_18,
   get4PinRedAward_18,
   getScoreHeadAndTail_18,
+  getCentralQuangNamLottoNumbers,
 } = require("../lib");
 
-const saveHistory = async (order, totalPoints, matched_count, lottoNumbers) => {
+const saveHistory = async (order, totalPoints, matched_count, lottoNumbers, io) => {
   let ordered_userInfo = await User.findOne({ userId: order.userId });
-  console.log(lottoNumbers);
   let newHistory = new History({
     userId: order.userId,
-    gameType: "saigon",
+    gameType: "central-quangnam",
     betType: order.betType,
     digitType: order.digitType,
     resultNumbers: lottoNumbers,
@@ -39,6 +37,7 @@ const saveHistory = async (order, totalPoints, matched_count, lottoNumbers) => {
     status: matched_count > 0 ? "win" : "lose",
   });
   await newHistory.save();
+  io.in("central-quangnam").emit("NEW_RESULT", "central-quangnam");
   await axios
       .post(
         `${config.SERVICE_URL}/create-transaction`, 
@@ -58,7 +57,7 @@ const saveHistory = async (order, totalPoints, matched_count, lottoNumbers) => {
   await Order.updateOne({ _id: order._id }, { processed: true, status: matched_count > 0 ? "win" : "lose" });
 };
 
-const processBackpack = async (order, lottoNumbers) => {
+const processBackpack = async (order, lottoNumbers, io) => {
   let totalPoints = 0;
   let matched_count = 0;
   let order_numbers = order.numbers.split(";");
@@ -73,7 +72,7 @@ const processBackpack = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.backpack.lot2 * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     case "lot2_1K":
       let first2digits = getLast2digits_18(lottoNumbers);
@@ -83,7 +82,7 @@ const processBackpack = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.backpack.lot2_1K * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     case "lot3":
       let last3digits = getLast3digits_18(lottoNumbers);
@@ -93,7 +92,7 @@ const processBackpack = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.backpack.lot3 * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     case "lot4":
       let last4digits = getLast4digits_18(lottoNumbers);
@@ -103,14 +102,14 @@ const processBackpack = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.backpack.lot4 * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     default:
       return;
   }
 };
 
-const processLoxien = async (order, lottoNumbers) => {
+const processLoxien = async (order, lottoNumbers, io) => {
   let totalPoints = 0;
   let matched_count = 0;
   let order_numbers = order.numbers.split(";");
@@ -130,7 +129,7 @@ const processLoxien = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.loxien.loxien2 * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     case "xien3":
       for (let pair of order_numbers) {
@@ -144,7 +143,7 @@ const processLoxien = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.loxien.loxien3 * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     case "xien4":
       for (let pair of order_numbers) {
@@ -158,14 +157,14 @@ const processLoxien = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.loxien.loxien3 * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     default:
       return;
   }
 };
 
-const processScore = async (order, lottoNumbers) => {
+const processScore = async (order, lottoNumbers, io) => {
   let totalPoints = 0;
   let matched_count = 0;
   let order_numbers = order.numbers.split(";");
@@ -179,7 +178,7 @@ const processScore = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.score.first * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     case "special_topics":
       let redAwardLast2digit = getRedAwardLast2digits_18(lottoNumbers);
@@ -189,7 +188,7 @@ const processScore = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.score.special_topics * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     case "special_headline":
       let redAwardFirst2digit = getRedAwardFirst2digits_18(lottoNumbers);
@@ -199,7 +198,7 @@ const processScore = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.score.special_headline * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     case "special_heading":
       matched_count = order_numbers.filter((e) => e == lottoNumbers.eighth).length;
@@ -208,7 +207,7 @@ const processScore = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.score.special_heading * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     case "special_headandtail":
       let headandtail = getScoreHeadAndTail_18(lottoNumbers);
@@ -218,7 +217,7 @@ const processScore = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.score.special_headandtail * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     case "first_de":
       let firstPrizeFirst2digit = getFirstPrizeFirst2digits_18(lottoNumbers);
@@ -228,14 +227,14 @@ const processScore = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.score.first_de * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     default:
       return;
   }
 };
 
-const processHeadAndTail = async (order, lottoNumbers) => {
+const processHeadAndTail = async (order, lottoNumbers, io) => {
   let totalPoints = 0;
   let matched_count = 0;
   let order_numbers = order.numbers.split(";");
@@ -249,7 +248,7 @@ const processHeadAndTail = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.headandtail.head * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     case "tail":
       let unitDigit = lottoNumbers.redAward.substr(5, 1);
@@ -259,14 +258,14 @@ const processHeadAndTail = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.headandtail.tail * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     default:
       return;
   }
 };
 
-const processThreeMore = async (order, lottoNumbers) => {
+const processThreeMore = async (order, lottoNumbers, io) => {
   let totalPoints = 0;
   let matched_count = 0;
   let order_numbers = order.numbers.split(";");
@@ -279,7 +278,7 @@ const processThreeMore = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.threeMore.pin3 * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     case "pin3_headandtail":
       let pin3HeadAndTail = get3PinHeadAndTail_18(lottoNumbers);
@@ -289,7 +288,7 @@ const processThreeMore = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.threeMore.pin3_headandtail * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     case "special_pin3":
       let pin3Special = get3PinRedAward_18(lottoNumbers);
@@ -299,14 +298,14 @@ const processThreeMore = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.threeMore.special_pin3 * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     default:
       return;
   }
 };
 
-const processFourMore = async (order, lottoNumbers) => {
+const processFourMore = async (order, lottoNumbers, io) => {
   let totalPoints = 0;
   let order_numbers = order.numbers.split(";");
   order_numbers.pop();
@@ -321,7 +320,7 @@ const processFourMore = async (order, lottoNumbers) => {
   return;
 };
 
-const processSlide = async (order, lottoNumbers) => {
+const processSlide = async (order, lottoNumbers, io) => {
   let totalPoints = 0;
   let matched_count = 0;
   let order_numbers = order.numbers.split(";");
@@ -340,7 +339,7 @@ const processSlide = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.slide.slide4 * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     case "slide8":
       for (let pair of order_numbers) {
@@ -354,7 +353,7 @@ const processSlide = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.slide.slide8 * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     case "slide10":
       for (let pair of order_numbers) {
@@ -368,106 +367,136 @@ const processSlide = async (order, lottoNumbers) => {
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.slide.slide10 * order.multiple;
       }
-      await saveHistory(order, totalPoints, matched_count, lottoNumbers);
+      await saveHistory(order, totalPoints, matched_count, lottoNumbers, io);
       return;
     default:
       return;
   }
 };
 
-const processOrders = async (io, prevEndTime) => {
-  let lottoNumbers = create18LottoNumbers();
-  let newResult = new Result({
-    endTime: prevEndTime,
-    gameType: "saigon",
-    numbers: lottoNumbers,
-  });
+const startNewGameAndProcessOrders = async (io, prevRestrictTime, prevEndTime) => {
+  console.log("[START]:[NEW]:[GAME]");
+  
+  let endTime = prevEndTime + durations.perWeek;
+  let restrictTime = prevRestrictTime + durations.perWeek;
+  
+  await Staging.updateOne({ gameType: "central-quangnam" }, { endTime: endTime, restrictTime: restrictTime });
+  
+  io.in("central-quangnam").emit("START_NEW_GAME", "central-quangnam");
+  
+  setTimeout(async () => {
+    let lottoNumbers = await getCentralQuangNamLottoNumbers();
+    let newResult = new Result({
+      endTime: prevEndTime,
+      restrictTime: prevRestrictTime,
+      gameType: "central-quangnam",
+      numbers: lottoNumbers,
+    });
 
-  await newResult.save();
-  await Staging.updateOne({ gameType: "saigon" }, { numbers: lottoNumbers });
-  let orders = await Order.find({ gameType: "saigon", processed: false });
-  if (orders.length === 0) {
-    let endTime = Date.now() + durations.perDay;
-    await Staging.updateOne({ gameType: "saigon" }, { endTime: endTime });
-    io.in("saigon").emit("START_NEW_GAME", "saigon");
-    startLoopProcess(io, endTime);
-  } else {
-    for (let order of orders) {
-      switch (order.betType) {
-        case "backpack": {
-          await processBackpack(order, lottoNumbers);
-          break;
+    await newResult.save();
+    await Staging.updateOne({ gameType: "central-quangnam" }, { numbers: lottoNumbers });
+    
+    if(lottoNumbers === {}) {
+      await Order.updateMany({gameType: "central-quangnam"}, {status: 'missing'});
+    } else {
+      let orders = await Order.find({ gameType: "central-quangnam", processed: false, status: 'pending' });
+    
+      if (orders.length === 0) {
+        let endTime = prevEndTime + durations.perWeek;
+        let restrictTime = prevRestrictTime + durations.perWeek;
+        
+        await Staging.updateOne({ gameType: "central-quangnam" }, { endTime: endTime, restrictTime: restrictTime });
+        
+        io.in("central-quangnam").emit("START_NEW_GAME", "central-quangnam");
+        
+        startLoopProcess(io, restrictTime, endTime);
+      } else {
+        for (let order of orders) {
+          switch (order.betType) {
+            case "backpack": {
+              console.log("[BACKPACK]");
+              await processBackpack(order, lottoNumbers, io);
+              break;
+            }
+            case "loxien": {
+              await processLoxien(order, lottoNumbers, io);
+              break;
+            }
+            case "score": {
+              await processScore(order, lottoNumbers, io);
+              break;
+            }
+            case "headandtail": {
+              await processHeadAndTail(order, lottoNumbers, io);
+              break;
+            }
+            case "threeMore": {
+              await processThreeMore(order, lottoNumbers, io);
+              break;
+            }
+            case "fourMore": {
+              await processFourMore(order, lottoNumbers, io);
+              break;
+            }
+            case "slide": {
+              await processSlide(order, lottoNumbers, io);
+              break;
+            }
+            default:
+              break;
+          }
         }
-        case "loxien": {
-          await processLoxien(order, lottoNumbers);
-          break;
-        }
-        case "score": {
-          await processScore(order, lottoNumbers);
-          break;
-        }
-        case "headandtail": {
-          await processHeadAndTail(order, lottoNumbers);
-          break;
-        }
-        case "threeMore": {
-          await processThreeMore(order, lottoNumbers);
-          break;
-        }
-        case "fourMore": {
-          await processFourMore(order, lottoNumbers);
-          break;
-        }
-        case "slide": {
-          await processSlide(order, lottoNumbers);
-          break;
-        }
-        case "jackpot": {
-          await processJackpot(order, lottoNumbers);
-          break;
-        }
-        default:
-          break;
+        await Order.deleteMany({});
       }
     }
-    // await Order.deleteMany({});
-    let endTime = Date.now() + durations.perDay;
-    await Staging.updateOne({ gameType: "saigon" }, { endTime: endTime });
-    io.in("saigon").emit("START_NEW_GAME", "saigon");
-    startLoopProcess(io, endTime);
-  }
+  }, 25 * 60 * 1000);
+  startLoopProcess(io, restrictTime, endTime);
 };
 
-const startLoopProcess = async (io, endTime) => {
+const startLoopProcess = async (io, restrictTime, endTime) => {
   let duration = endTime - Date.now();
   let interval = setInterval(() => {
     duration -= 1000;
-    io.in("saigon").emit("TIMER", { duration: duration, game: "saigon" });
+    io.in("central-quangnam").emit("TIMER", { duration: duration, game: "central-quangnam" });
+    if (restrictTime - Date.now() < 0) {
+      io.in("central-quangnam").emit("RESTRICT_BET_CENTRAL_QUANGNAM", "STOP");
+    }
     if (duration < 0) {
       clearInterval(interval);
-      processOrders(io, endTime);
+      startNewGameAndProcessOrders(io, restrictTime, endTime);
     }
   }, 1000);
 };
 
-exports.startSaigonDaemon = async (io) => {
-  console.log("[START]:[SAIGON_DAEMON]");
-  let gameInfo = await Staging.findOne({ gameType: "saigon" });
+exports.startCentralQuanNamDaemon = async (io) => {
+  console.log("[START]:[CENTRAL_QUANGNAM_DAEMON]");
+  let gameInfo = await Staging.findOne({ gameType: "central-quangnam" });
   if (gameInfo) {
     if (gameInfo.endTime > Date.now()) {
-      startLoopProcess(io, gameInfo.endTime);
+      if (gameInfo.restrictTime > Date.now()) {
+        io.in("central-quangnam").emit("RESTRICT_BET_CENTRAL_QUANGNAM", "STOP");
+      } else {
+        io.in("central-quangnam").emit("ENABLE_BET_CENTRAL_QUANGNAM", "START");
+      }
+      startLoopProcess(io, gameInfo.restrictTime, gameInfo.endTime);
     } else {
-      let newEndTime = Date.now() + durations.perDay;
-      await Staging.updateOne({ gameType: "saigon" }, { endTime: newEndTime });
-      startLoopProcess(io, newEndTime);
+      let weeks = Math.floor ((Date.now() - Number(config.SEED_TIME_CENTRAL_QUANGNAM)) / (7 * 86400000)) + 1;
+      let newEndTime = Number(config.SEED_TIME_CENTRAL_QUANGNAM) + 86400000 * 7 * weeks;
+      let newRestrictTime = newEndTime - 3600000;
+      await Staging.updateOne({ gameType: "central-quangnam" }, { endTime: newEndTime, restrictTime: newRestrictTime });
+      startLoopProcess(io, newRestrictTime, newEndTime);
     }
   } else {
-    let endTime = Date.now() + durations.perDay;
+    let weeks = Math.floor((Date.now() - Number(config.SEED_TIME_CENTRAL_QUANGNAM)) / (7 * 86400000)) + 1;
+    let newEndTime = Number(config.SEED_TIME_CENTRAL_QUANGNAM) + 86400000 * 7 * weeks;
+    let newRestrictTime = newEndTime - 3600000;
     let newStaging = new Staging({
-      gameType: "saigon",
-      endTime: endTime,
+      gameType: "central-quangnam",
+      restrictTime: newRestrictTime,
+      endTime: newEndTime,
     });
+    
     await newStaging.save();
-    startLoopProcess(io, endTime);
+    startLoopProcess(io, newRestrictTime, newEndTime);
   }
 };

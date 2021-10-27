@@ -12,6 +12,10 @@ const ResultSchema = new Schema(
       type: String,
       required: true,
     },
+    restrictTime: {
+      type: Date,
+      default: Date.now(),
+    },
     endTime: {
       type: Date,
       default: Date.now(),
