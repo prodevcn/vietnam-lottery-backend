@@ -531,6 +531,36 @@ exports.getSouthernResultFromConfirmURL = async () => {
   }
 }
 
+exports.getLottoNumbersFromURL1 = async (url) => {
+  const data = (await axios.get(url)).data;
+  const phrase = parse.parse(data);
+  
+  const tbody = phrase.getElementsByTagName('tbody')[0];
+  const tableRows = tbody.getElementsByTagName('tr');
+  const lottoPairs = [];
+  let lottoPair;
+  const jackpot = tableRows[1].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  const firstPrize = tableRows[2].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  const secondPrize = tableRows[3].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  const thirdPrize = tableRows[4].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  const fourthPrize = tableRows[5].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  const fifthPrize = tableRows[6].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  const sixthPrize = tableRows[7].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  const seventhPrize = tableRows[8].getElementsByTagName('td')[1].childNodes[0].rawText.replace(/\s/g, '');
+  
+  return {
+    redAward: jackpot,
+    first: firstPrize,
+    second: secondPrize,
+    third: thirdPrize,
+    fourth: fourthPrize,
+    fifth: fifthPrize,
+    sixth: sixthPrize,
+    seventh: seventhPrize,
+    pairs: lottoPairs
+  };
+}
+
 
 
 exports.getNorthernLottoNumbers = async () => {
@@ -551,4 +581,7 @@ exports.getSouthernHochiminhLottoNumbers = async () => {
 
 exports.getCentralQuangNamLottoNumbers = async () => {
   // return numbers;
+  const numbers = getLottoNumbersFromURL1(`${config.RESULT_URL1}/getkqxs/quang-nam.js`);
+  return numbers;
 }
+
