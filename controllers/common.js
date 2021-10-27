@@ -15,7 +15,7 @@ exports.getBalanceFromMainService = (req, res) => {
             console.log(response.data);
             return res.send({code: 0, balance: response.data.data.balance});
         } else {
-            console.log(res.data);
+            console.log(response.data);
             return res.send({code: 1, balance: null, msg: 'Main service error!'});
         }
     })
