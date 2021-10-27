@@ -19,5 +19,5 @@ module.exports = {
   RESULT_URL_SOUTHERN: process.env.RESULT_URL_SOUTHERN,
   RESULT_URL_ASEAN: process.env.RESULT_URL_ASEAN,
 
-  SERVICE_URL: process.env.SERVICE_URL_DEBUG
+  SERVICE_URL: process.env.SERVICE_URL_PRODUCT
 };
