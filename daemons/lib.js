@@ -571,6 +571,8 @@ exports.getNorthernLottoNumbers = async () => {
     sendEmail();
     return {};
   }
+  console.log(northernResult1);
+  console.log(northernResult2);
   return northernResult1;
 }
 
