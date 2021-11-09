@@ -397,7 +397,7 @@ exports.getAllLot6Numbers = (value) => {
   return Object.keys(value).map((item) => {return value[item]})
 }
 
-exports.getNorthernResultsFromConfirmURL = async () => {
+const getNorthernResultsFromConfirmURL = async () => {
   const data = (await axios.get(config.RESULT_URL_NORTHERN)).data;
   const phrase = parse.parse(data);
   const tbody = phrase.getElementsByTagName('tbody')[0];
@@ -475,7 +475,7 @@ exports.getNorthernResultsFromConfirmURL = async () => {
   return numbers
 }
 
-exports.getNorthernResultsFromURL1 = async () => {
+const getNorthernResultsFromURL1 = async () => {
   const data = (await axios.get(`${config.RESULT_URL1}/getkqxs/mien-bac.js`)).data;
   const phrase = parse.parse(data);  
   const tbody = phrase.getElementsByTagName('tbody')[0];
@@ -501,7 +501,7 @@ exports.getNorthernResultsFromURL1 = async () => {
   };
 }
 
-exports.getSouthernResultFromConfirmURL = async () => {
+const getSouthernResultFromConfirmURL = async () => {
   const data = (await axios.get(config.RESULT_URL_SOUTHERN)).data;
   const phrase = parse.parse(data);
   const tbody = phrase.getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
@@ -531,7 +531,7 @@ exports.getSouthernResultFromConfirmURL = async () => {
   }
 }
 
-exports.getLottoNumbersFromURL1 = async (url) => {
+const getLottoNumbersFromURL1 = async (url) => {
   const data = (await axios.get(url)).data;
   const phrase = parse.parse(data);
   
@@ -565,7 +565,7 @@ exports.getLottoNumbersFromURL1 = async (url) => {
 
 exports.getNorthernLottoNumbers = async () => {
   northernResult1 = await getNorthernResultsFromConfirmURL();
-  northernResult2 = await this.getNorthernResultsFromURL1();
+  northernResult2 = await getNorthernResultsFromURL1();
   if(!northernResult1) return northernResult2;
   if(!northernResult1 && !northernResult2) {
     sendEmail();
@@ -577,13 +577,13 @@ exports.getNorthernLottoNumbers = async () => {
 }
 
 exports.getSouthernHochiminhLottoNumbers = async () => {
-  southernResult = await this.getSouthernResultFromConfirmURL();
+  southernResult = await getSouthernResultFromConfirmURL();
   return southernResult;
 }
 
 exports.getCentralQuangNamLottoNumbers = async () => {
   // return numbers;
-  const numbers = getLottoNumbersFromURL1(`${config.RESULT_URL1}/getkqxs/quang-nam.js`);
+  const numbers = await getLottoNumbersFromURL1(`${config.RESULT_URL1}/getkqxs/quang-nam.js`);
   return numbers;
 }
 
