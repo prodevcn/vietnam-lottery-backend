@@ -5,6 +5,15 @@ module.exports = {
     perMinute: 60 * 1000,
     per5Minutes: 5 * 60 * 1000,
     per2Minutes: 2 * 60 * 1000,
+    restrictDuration: 60 * 60 * 1000,
+    processDuration: 25 * 60 * 1000,
+    // perDay: 60 * 1000,
+    // perWeek: 60 * 1000,
+    // perMinute: 60 * 1000,
+    // per5Minutes: 60 * 1000,
+    // per2Minutes: 60 * 1000,
+    // restrictDuration: 10 * 1000,
+    // processDuration: 3 * 1000,
   },
   winRates: {
     lot27: {

@@ -402,7 +402,8 @@ exports.startMegaDaemon = async (io) => {
   let gameInfo = await Staging.findOne({ gameType: "mega" });
   if (gameInfo) {
     if (gameInfo.endTime > Date.now()) {
-      startLoopProcess(io, gameInfo.endTime);
+      const endT = new Date(gameInfo.endTime).getTime();
+      startLoopProcess(io, endT);
     } else {
       let newEndTime = Date.now() + durations.perMinute;
       await Staging.updateOne({ gameType: "mega" }, { endTime: newEndTime });

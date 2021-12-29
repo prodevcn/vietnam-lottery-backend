@@ -392,7 +392,6 @@ const startNewGameAndProcessOrders = async (io, prevRestrictTime, prevEndTime) =
       gameType: "central-quangnam",
       numbers: lottoNumbers,
     });
-
     await newResult.save();
     await Staging.updateOne({ gameType: "central-quangnam" }, { numbers: lottoNumbers });
     
@@ -449,7 +448,7 @@ const startNewGameAndProcessOrders = async (io, prevRestrictTime, prevEndTime) =
         await Order.deleteMany({});
       }
     }
-  }, 25 * 60 * 1000);
+  }, durations.processDuration);
   startLoopProcess(io, restrictTime, endTime);
 };
 
@@ -478,18 +477,20 @@ exports.startCentralQuanNamDaemon = async (io) => {
       } else {
         io.in("central-quangnam").emit("ENABLE_BET_CENTRAL_QUANGNAM", "START");
       }
-      startLoopProcess(io, gameInfo.restrictTime, gameInfo.endTime);
+      const restrictT = new Date(gameInfo.restrictTime).getTime();
+      const endT = new Date(gameInfo.endTime).getTime();
+      startLoopProcess(io, restrictT, endT);
     } else {
-      let weeks = Math.floor ((Date.now() - Number(config.SEED_TIME_CENTRAL_QUANGNAM)) / (7 * 86400000)) + 1;
-      let newEndTime = Number(config.SEED_TIME_CENTRAL_QUANGNAM) + 86400000 * 7 * weeks;
-      let newRestrictTime = newEndTime - 3600000;
+      let weeks = Math.floor ((Date.now() - Number(config.SEED_TIME_CENTRAL_QUANGNAM)) / durations.perWeek) + 1;
+      let newEndTime = Number(config.SEED_TIME_CENTRAL_QUANGNAM) + durations.perWeek * weeks;
+      let newRestrictTime = newEndTime - durations.restrictDuration;
       await Staging.updateOne({ gameType: "central-quangnam" }, { endTime: newEndTime, restrictTime: newRestrictTime });
       startLoopProcess(io, newRestrictTime, newEndTime);
     }
   } else {
-    let weeks = Math.floor((Date.now() - Number(config.SEED_TIME_CENTRAL_QUANGNAM)) / (7 * 86400000)) + 1;
-    let newEndTime = Number(config.SEED_TIME_CENTRAL_QUANGNAM) + 86400000 * 7 * weeks;
-    let newRestrictTime = newEndTime - 3600000;
+    let weeks = Math.floor((Date.now() - Number(config.SEED_TIME_CENTRAL_QUANGNAM)) / durations.perWeek) + 1;
+    let newEndTime = Number(config.SEED_TIME_CENTRAL_QUANGNAM) + durations.perWeek * weeks;
+    let newRestrictTime = newEndTime - durations.restrictDuration;
     let newStaging = new Staging({
       gameType: "central-quangnam",
       restrictTime: newRestrictTime,

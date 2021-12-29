@@ -455,7 +455,8 @@ exports.startSaigonDaemon = async (io) => {
   let gameInfo = await Staging.findOne({ gameType: "saigon" });
   if (gameInfo) {
     if (gameInfo.endTime > Date.now()) {
-      startLoopProcess(io, gameInfo.endTime);
+      const endT = new Date(gameInfo.endTime).getTime();
+      startLoopProcess(io, endT);
     } else {
       let newEndTime = Date.now() + durations.perDay;
       await Staging.updateOne({ gameType: "saigon" }, { endTime: newEndTime });

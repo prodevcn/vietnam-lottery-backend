@@ -402,7 +402,6 @@ const startNewGameAndProcessOrders = async (io, prevRestrictTime, prevEndTime) =
       gameType: "northern",
       numbers: lottoNumbers,
     });
-
     await newResult.save();
     await Staging.updateOne({ gameType: "northern" }, { numbers: lottoNumbers });
     
@@ -462,7 +461,7 @@ const startNewGameAndProcessOrders = async (io, prevRestrictTime, prevEndTime) =
         await Order.deleteMany({});
       }
     }
-  }, 25 * 60 * 1000);
+  }, durations.processDuration);
   startLoopProcess(io, restrictTime, endTime);
 };
 
@@ -472,7 +471,7 @@ const startLoopProcess = async (io, restrictTime, endTime) => {
     duration -= 1000;
     io.in("northern").emit("TIMER", { duration: duration, game: "northern" });
     if (restrictTime - Date.now() < 0) {
-      io.in("norther").emit("RESTRICT_BET_NORTHERN", "STOP");
+      io.in("northern").emit("RESTRICT_BET_NORTHERN", "STOP");
     }
     if (duration < 0) {
       clearInterval(interval);
@@ -491,18 +490,20 @@ exports.startNorthernDaemon = async (io) => {
       } else {
         io.in("northern").emit("ENABLE_BET_NORTHERN", "START");
       }
-      startLoopProcess(io, gameInfo.restrictTime, gameInfo.endTime);
+      const restrictT = new Date(gameInfo.restrictTime).getTime();
+      const endT = new Date(gameInfo.endTime).getTime();
+      startLoopProcess(io, restrictT, endT);
     } else {
-      let days = Math.floor ((Date.now() - Number(config.SEED_TIME_NORTHERN)) / 86400000) + 1;
-      let newEndTime = Number(config.SEED_TIME_NORTHERN) + 86400000 * days;
-      let newRestrictTime = newEndTime - 3600000;
+      let days = Math.floor ((Date.now() - Number(config.SEED_TIME_NORTHERN)) / durations.perDay) + 1;
+      let newEndTime = Number(config.SEED_TIME_NORTHERN) + durations.perDay * days;
+      let newRestrictTime = newEndTime - durations.restrictDuration;
       await Staging.updateOne({ gameType: "northern" }, { endTime: newEndTime, restrictTime: newRestrictTime });
       startLoopProcess(io, newRestrictTime, newEndTime);
     }
   } else {
-    let days = Math.floor((Date.now() - Number(config.SEED_TIME_NORTHERN)) / 86400000) + 1;
-    let newEndTime = Number(config.SEED_TIME_NORTHERN) + 86400000 * days;
-    let newRestrictTime = newEndTime - 3600000;
+    let days = Math.floor((Date.now() - Number(config.SEED_TIME_NORTHERN)) / durations.perDay) + 1;
+    let newEndTime = Number(config.SEED_TIME_NORTHERN) + durations.perDay * days;
+    let newRestrictTime = newEndTime - durations.restrictDuration;
     let newStaging = new Staging({
       gameType: "northern",
       restrictTime: newRestrictTime,

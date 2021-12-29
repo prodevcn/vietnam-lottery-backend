@@ -449,7 +449,7 @@ const startNewGameAndProcessOrders = async (io, prevRestrictTime, prevEndTime) =
         await Order.deleteMany({});
       }
     }
-  }, 25 * 60 * 1000);
+  }, durations.processDuration);
   startLoopProcess(io, restrictTime, endTime);
 };
 
@@ -478,18 +478,20 @@ exports.startSouthernHochiminhDaemon = async (io) => {
       } else {
         io.in("southern-hochiminh").emit("ENABLE_BET_SOUTHERN_HOCHIMINH", "START");
       }
-      startLoopProcess(io, gameInfo.restrictTime, gameInfo.endTime);
+      const restrictT = new Date(gameInfo.restrictTime).getTime();
+      const endT = new Date(gameInfo.endTime).getTime();
+      startLoopProcess(io, restrictT, endT);
     } else {
-      let weeks = Math.floor ((Date.now() - Number(config.SEED_TIME_SOUTHERN_HOCHIMINH)) / (7 * 86400000)) + 1;
-      let newEndTime = Number(config.SEED_TIME_SOUTHERN_HOCHIMINH) + 86400000 * 7 * weeks;
-      let newRestrictTime = newEndTime - 3600000;
+      let weeks = Math.floor ((Date.now() - Number(config.SEED_TIME_SOUTHERN_HOCHIMINH)) / durations.perWeek) + 1;
+      let newEndTime = Number(config.SEED_TIME_SOUTHERN_HOCHIMINH) + durations.perWeek * weeks;
+      let newRestrictTime = newEndTime - durations.restrictDuration;
       await Staging.updateOne({ gameType: "southern-hochiminh" }, { endTime: newEndTime, restrictTime: newRestrictTime });
       startLoopProcess(io, newRestrictTime, newEndTime);
     }
   } else {
-    let weeks = Math.floor((Date.now() - Number(config.SEED_TIME_SOUTHERN_HOCHIMINH)) / (7 * 86400000)) + 1;
-    let newEndTime = Number(config.SEED_TIME_SOUTHERN_HOCHIMINH) + 86400000 * 7 * weeks;
-    let newRestrictTime = newEndTime - 3600000;
+    let weeks = Math.floor((Date.now() - Number(config.SEED_TIME_SOUTHERN_HOCHIMINH)) / durations.perWeek) + 1;
+    let newEndTime = Number(config.SEED_TIME_SOUTHERN_HOCHIMINH) + durations.perWeek * weeks;
+    let newRestrictTime = newEndTime - durations.restrictDuration;
     let newStaging = new Staging({
       gameType: "southern-hochiminh",
       restrictTime: newRestrictTime,
