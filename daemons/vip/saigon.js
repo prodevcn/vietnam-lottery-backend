@@ -72,6 +72,7 @@ const processBackpack = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.backpack.lot2 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -82,6 +83,7 @@ const processBackpack = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.backpack.lot2_1K * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -92,6 +94,7 @@ const processBackpack = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.backpack.lot3 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -102,6 +105,7 @@ const processBackpack = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.backpack.lot4 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -129,6 +133,7 @@ const processLoxien = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.loxien.loxien2 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -143,6 +148,7 @@ const processLoxien = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.loxien.loxien3 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -157,6 +163,7 @@ const processLoxien = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.loxien.loxien3 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -178,6 +185,7 @@ const processScore = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.score.first * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -188,6 +196,7 @@ const processScore = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.score.special_topics * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -198,6 +207,7 @@ const processScore = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.score.special_headline * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -207,6 +217,7 @@ const processScore = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.score.special_heading * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -217,6 +228,7 @@ const processScore = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.score.special_headandtail * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -227,6 +239,7 @@ const processScore = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.score.first_de * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -248,6 +261,7 @@ const processHeadAndTail = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.headandtail.head * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -258,6 +272,7 @@ const processHeadAndTail = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.headandtail.tail * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -278,6 +293,7 @@ const processThreeMore = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.threeMore.pin3 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -288,6 +304,7 @@ const processThreeMore = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.threeMore.pin3_headandtail * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -298,6 +315,7 @@ const processThreeMore = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.threeMore.special_pin3 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -316,6 +334,7 @@ const processFourMore = async (order, lottoNumbers) => {
     totalPoints = 0;
   } else {
     totalPoints = (2 * matched_count - 1) * winRates.lot18.fourMore * order.multiple;
+    totalPoints = (totalPoints / 22840).toFixed(2);
   }
   await saveHistory(order, totalPoints, matched_count, lottoNumbers);
   return;
@@ -339,6 +358,7 @@ const processSlide = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.slide.slide4 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -353,6 +373,7 @@ const processSlide = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.slide.slide8 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -367,6 +388,7 @@ const processSlide = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot18.slide.slide10 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;

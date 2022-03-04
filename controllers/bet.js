@@ -15,11 +15,12 @@ exports.saveBet = async (req, res) => {
       }
     })).data.data.balance;
     
-    if (balance < betAmount) {
+    if (balance < (betAmount / 22840).toFixed(2)) {
       return res.json({ msg: "Insufficient balance" });
     }
+    order.betAmount = (order.betAmount / 22840).toFixed(2);
     const newOrder = new Order(order);
-    await User.updateOne({ userId: userId }, { balance: user.balance - betAmount });
+    await User.updateOne({ userId: userId }, { balance: user.balance - (betAmount / 22840).toFixed(2) });
     const savedOrder = await newOrder.save();
     await axios
       .post(
@@ -28,7 +29,7 @@ exports.saveBet = async (req, res) => {
           game: "lottopoka", 
           transactionId: savedOrder._id, 
           type: 'bet',
-          amount: betAmount, 
+          amount: (betAmount / 22840).toFixed(2), 
         },
         {
           headers: {

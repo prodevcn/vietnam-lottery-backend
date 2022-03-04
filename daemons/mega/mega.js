@@ -88,6 +88,7 @@ const processMultiple = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.multiple.multiple4 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -101,6 +102,7 @@ const processMultiple = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.multiple.multiple4 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -114,6 +116,7 @@ const processMultiple = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.multiple.multiple4 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -127,6 +130,7 @@ const processMultiple = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.multiple.multiple4 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -152,6 +156,7 @@ const processSlide = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide5 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -165,6 +170,7 @@ const processSlide = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide5 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -178,6 +184,7 @@ const processSlide = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide6 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -191,6 +198,7 @@ const processSlide = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide7 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -204,6 +212,7 @@ const processSlide = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide8 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -217,6 +226,7 @@ const processSlide = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide9 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -230,6 +240,7 @@ const processSlide = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide10 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -255,6 +266,7 @@ const processSelect = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide5 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -268,6 +280,7 @@ const processSelect = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide5 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -281,6 +294,7 @@ const processSelect = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide6 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -294,6 +308,7 @@ const processSelect = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide7 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -307,6 +322,7 @@ const processSelect = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide8 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -320,6 +336,7 @@ const processSelect = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide9 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
@@ -333,6 +350,7 @@ const processSelect = async (order, lottoNumbers) => {
         totalPoints = 0;
       } else {
         totalPoints = (2 * matched_count - 1) * winRates.lot6.slide.slide10 * order.multiple;
+        totalPoints = (totalPoints / 22840).toFixed(2);
       }
       await saveHistory(order, totalPoints, matched_count, lottoNumbers);
       return;
